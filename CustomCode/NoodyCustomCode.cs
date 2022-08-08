@@ -126,6 +126,33 @@ namespace NOOD{
         #endregion
    
         #region Camera
+        /// <summary>
+        /// Make camera size always show all object with collider (2D and 3D)
+        /// (center, size) = CalculateOrthoCamsize();
+        /// </summary>
+        /// <param name="_camera">Main camera</param>
+        /// <param name="_buffer">Amount of padding size</param>
+        /// <returns></returns>
+        public static (Vector3 center, float size) CalculateOrthoCamSize(Camera _camera, float _buffer)
+        {
+            var bound = new Bounds(); //Create bound with center Vector3.zero;
+
+            foreach (var col in GameObject.FindObjectsOfType<Collider2D>()) bound.Encapsulate(col.bounds);
+            foreach (var col in GameObject.FindObjectsOfType<Collider>()) bound.Encapsulate(col.bounds);
+
+            bound.Expand(_buffer);
+
+            var vertical = bound.size.y;
+            var horizontal = bound.size.x * _camera.pixelHeight / _camera.pixelWidth;
+
+            Debug.Log("V: " + vertical + ", H: " + horizontal);
+
+            var size = Mathf.Max(horizontal, vertical) * 0.5f;
+            var center = bound.center + new Vector3(0f, 0f, -10f);
+
+            return (center, size);
+        } 
+            
         public static void SmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset, 
         float maxX, float maxY, float minX, float minY){
 
@@ -171,10 +198,37 @@ namespace NOOD{
         #endregion
     
         #region Color
-        public static Color GetColorFormHex(string hexCode){
-            Color color = new Color();
+        /// <summary>
+        /// <para>Return RGBA color </para>
+        /// </summary>
+        /// <param name="hexCode">hex code form RRGGBB or RRGGBBAA for alpha output</param>
+        /// <returns>Color with RGBA form</returns>
+        public static Color HexToColor(string hexCode)
+        {
+            Color color;
             ColorUtility.TryParseHtmlString(hexCode, out color);
+
             return color;
+        }
+        //----------------------------//
+        /// <summary>
+        /// Return hex code with alpha of the color
+        /// </summary>
+        /// <param name="color">Color's form RRGGBBAA</param>
+        /// <returns></returns>
+        public static string ColorAToHex(Color color)
+        {
+            return ColorUtility.ToHtmlStringRGBA(color);
+        }
+        //----------------------------//
+        /// <summary>
+        /// Return hex code without alpha of the color
+        /// </summary>
+        /// <param name="color">Color's form RRGGBB</param>
+        /// <returns></returns>
+        public static string ColorToHex(Color color)
+        {
+            return ColorUtility.ToHtmlStringRGB(color);
         }
         #endregion
     }
