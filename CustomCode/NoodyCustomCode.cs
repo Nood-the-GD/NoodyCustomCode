@@ -5,51 +5,60 @@ using System;
 using System.Threading;
 using UnityEngine;
 
-namespace NOOD{
+namespace NOOD
+{
     public static class NoodyCustomCode
     {
         public static Thread newThread;
 
         #region Look, mouse and Vector zone
-        public static Vector3 ScreenPointToWorldPoint(Vector2 screenPoint){
+        public static Vector3 ScreenPointToWorldPoint(Vector2 screenPoint)
+        {
             Camera cam = UnityEngine.GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             return cam.ScreenToWorldPoint(screenPoint);
         }
 
-        public static Vector3 MouseToWorldPoint(){
+        public static Vector3 MouseToWorldPoint()
+        {
             Camera cam = UnityEngine.GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             Vector3 mousePos = Input.mousePosition;
             return cam.ScreenToWorldPoint(mousePos);
         }
 
-        public static Vector3 MouseToWorldPoint2D(){
+        public static Vector3 MouseToWorldPoint2D()
+        {
             Camera cam = UnityEngine.GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             Vector3 mousePos = MouseToWorldPoint();
-            Vector3 temp = new Vector3(mousePos.x, mousePos.y);
+            Vector3 temp = new Vector3(mousePos.x, mousePos.y, 0f);
             return temp;
         }
 
-        public static Vector2 WorldPointToScreenPoint(Vector3 worldPoint){
+        public static Vector2 WorldPointToScreenPoint(Vector3 worldPoint)
+        {
             Camera cam = UnityEngine.GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             return cam.WorldToScreenPoint(worldPoint);
         }
 
-        public static void LookToMouse2D(Transform objectTransform){
+        public static void LookToMouse2D(Transform objectTransform)
+        {
             Vector3 mousePosition = MouseToWorldPoint();
             LookToPoint2D(objectTransform, mousePosition);
         }
 
-        public static void LookToPoint2D(Transform objectTransform, Vector3 targetPosition){
+        public static void LookToPoint2D(Transform objectTransform, Vector3 targetPosition)
+        {
             Vector3 lookDirection = LookDirection(objectTransform.position, targetPosition);
             float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             objectTransform.localEulerAngles = new Vector3(0f, 0f, angle);
         }
 
-        public static Vector3 LookDirection(Vector3 FromPosition, Vector3 targetPosition){
+        public static Vector3 LookDirection(Vector3 FromPosition, Vector3 targetPosition)
+        {
             return (targetPosition - FromPosition).normalized;
         }
 
-        public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float degrees, float radius){
+        public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float degrees, float radius)
+        {
             var radians = degrees * Mathf.Deg2Rad;
             var x = Mathf.Cos(radians);
             var y = Mathf.Sin(radians);
@@ -57,7 +66,8 @@ namespace NOOD{
             return pos += centerPosition;
         }
 
-        public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float radius){
+        public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float radius)
+        {
             var degrees = UnityEngine.Random.Range(0, 360);
             var radians = degrees * Mathf.Deg2Rad;
             var x = Mathf.Cos(radians);
@@ -67,7 +77,8 @@ namespace NOOD{
             return pos += centerPosition;
         }
 
-        public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float degrees, float radius){
+        public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float degrees, float radius)
+        {
             var radians = degrees * Mathf.Deg2Rad;
             var x = Mathf.Cos(radians);
             var z = Mathf.Sin(radians);
@@ -75,7 +86,8 @@ namespace NOOD{
             return pos += centerPosition;
         }
 
-        public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float radius){
+        public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float radius)
+        {
             var degrees = UnityEngine.Random.Range(0, 360);
             var radians = degrees * Mathf.Deg2Rad;
             var x = Mathf.Cos(radians);
@@ -87,7 +99,8 @@ namespace NOOD{
         #endregion
 
         #region Background Function
-        public static void RunInBackground(Action function, Queue<Action> mainThreadActions = null){
+        public static void RunInBackground(Action function, Queue<Action> mainThreadActions = null)
+        {
             //! WebGL doesn't do multithreading
 
             /* Create a mainThreadQueue in main script to hold the Action and run the action in Update like below
@@ -109,7 +122,7 @@ namespace NOOD{
             //! NoodyCustomCode.RunInBackGround(() => yourFunction(parameters)); 
 
             Thread t = new Thread(() => {
-                if(mainThreadActions != null)
+                if (mainThreadActions != null)
                     NoodyCustomCode.AddToMainThread(function, mainThreadActions);
                 else
                     function();
@@ -117,14 +130,15 @@ namespace NOOD{
             t.Start();
         }
 
-        static void AddToMainThread(Action function, Queue<Action> mainThreadActions){
+        static void AddToMainThread(Action function, Queue<Action> mainThreadActions)
+        {
             mainThreadActions.Enqueue(function);
         }
 
         //TODO: learn Unity.Jobs and create a Function to run many complex job in multithread
 
         #endregion
-   
+
         #region Camera
         /// <summary>
         /// Make camera size always show all object with collider (2D and 3D)
@@ -145,24 +159,72 @@ namespace NOOD{
             var vertical = bound.size.y;
             var horizontal = bound.size.x * _camera.pixelHeight / _camera.pixelWidth;
 
-            Debug.Log("V: " + vertical + ", H: " + horizontal);
+            //Debug.Log("V: " + vertical + ", H: " + horizontal);
 
             var size = Mathf.Max(horizontal, vertical) * 0.5f;
             var center = bound.center + new Vector3(0f, 0f, -10f);
 
             return (center, size);
-        } 
-            
-        public static void SmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset, 
-        float maxX, float maxY, float minX, float minY){
+        }
+
+        /// <summary>
+        /// Move camera base on your input (Put this function in Update to track the input)
+        /// </summary>
+        /// <param name="camera">Camera you want to move</param>
+        /// <param name="direction">-1 for oposite direction, 1 for follow direction</param>
+        static Vector3 DCMousePostion = Vector3.zero;
+        static Vector3 DCDir;
+        static Vector3 tempPos;
+        static Vector3 campPos;
+        public static void DragCamera(GameObject camera, int direction = 1)
+        {
+            if (Input.GetMouseButtonDown(0))
+                DCMousePostion = MouseToWorldPoint2D();
+            if (Input.GetMouseButton(0))
+            {
+                if (MouseToWorldPoint2D() != DCMousePostion)
+                {
+                    DCDir = MouseToWorldPoint2D() - DCMousePostion;
+                    camera.transform.position += direction * DCDir;
+                }
+            }
+        }
+
+        public static void DragCamera(GameObject camera, float minX, float maxX, float minY, float maxY, int direction = 1)
+        {
+            if (Input.GetMouseButtonDown(0))
+                DCMousePostion = MouseToWorldPoint2D();
+            if (Input.GetMouseButton(0))
+            {
+                if (MouseToWorldPoint2D() != DCMousePostion)
+                {
+                    DCDir = MouseToWorldPoint2D() - DCMousePostion;
+
+                    tempPos = direction * DCDir;
+                    campPos = camera.transform.position;
+
+                    if(campPos.x + tempPos.x > minX && campPos.x + tempPos.x < maxX)
+                        campPos.x += tempPos.x;
+                    if(campPos.y + tempPos.y > minY && campPos.y + tempPos.y < maxY)
+                        campPos.y += tempPos.y;
+
+
+                    camera.transform.position = campPos;
+                }
+            }
+        }
+
+        public static void SmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset,
+        float maxX, float maxY, float minX, float minY)
+        {
 
             Vector3 temp = camera.transform.position;
             Vector3 targetPosition = targetTransform.position + offset;
             Vector3 currentSpeed = Vector3.zero;
             Vector3 smoothPosition = Vector3.SmoothDamp(camera.transform.position, targetPosition, ref currentSpeed, smoothTime);
-            if(smoothPosition.x < maxX && smoothPosition.x > minX)
+            if (smoothPosition.x < maxX && smoothPosition.x > minX)
                 temp.x = smoothPosition.x;
-            if(smoothPosition.y < maxY && smoothPosition.y > minY)
+            if (smoothPosition.y < maxY && smoothPosition.y > minY)
                 temp.y = smoothPosition.y;
             temp.z = smoothPosition.z;
             camera.transform.position = temp;
@@ -176,27 +238,29 @@ namespace NOOD{
             while (elapsed < duration)
             {
                 float x, y;
-                if((elapsed / duration) * 100 < 80){
+                if ((elapsed / duration) * 100 < 80)
+                {
                     //Starting shake
                     x = UnityEngine.Random.Range(-range, range) * magnitude;
                     y = UnityEngine.Random.Range(-range, range) * magnitude;
                 }
-                else{
+                else
+                {
                     //Ending
                     range -= Time.deltaTime * elapsed;
                     x = UnityEngine.Random.Range(-range, range) * magnitude;
                     y = UnityEngine.Random.Range(-range, range) * magnitude;
                 }
-                
+
                 @object.transform.localPosition = new Vector3(x, y, OriginalPos.z);
-                    
+
                 elapsed += Time.deltaTime;
                 yield return null;
             }
             @object.transform.localPosition = OriginalPos;
         }
         #endregion
-    
+
         #region Color
         /// <summary>
         /// <para>Return RGBA color </para>
