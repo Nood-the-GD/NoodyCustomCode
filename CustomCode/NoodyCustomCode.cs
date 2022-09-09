@@ -168,7 +168,7 @@ namespace NOOD
         }
 
         /// <summary>
-        /// Move camera base on your input (Put this function in Update to track the input)
+        /// Move camera base on your input (Put this function in Update to track the input), direction = -1 for opposite direction, 1 for follow direction
         /// </summary>
         /// <param name="camera">Camera you want to move</param>
         /// <param name="direction">-1 for oposite direction, 1 for follow direction</param>
@@ -190,6 +190,11 @@ namespace NOOD
             }
         }
 
+        /// <summary>
+        /// Move camera base on your input (Put this function in Update to track the input), direction = -1 for opposite direction, 1 for follow direction
+        /// </summary>
+        /// <param name="camera">Camera you want to move</param>
+        /// <param name="direction">-1 for oposite direction, 1 for follow direction</param>
         public static void DragCamera(GameObject camera, float minX, float maxX, float minY, float maxY, int direction = 1)
         {
             if (Input.GetMouseButtonDown(0))
@@ -212,6 +217,47 @@ namespace NOOD
                     camera.transform.position = campPos;
                 }
             }
+        }
+
+        /// <summary>
+        /// Move camera base on your input (Put this function in Update to track the input), direction = -1 for opposite direction, 1 for follow direction
+        /// </summary>
+        /// <param name="camera">Camera you want to move</param>
+        /// <param name="direction">-1 for oposite direction, 1 for follow direction</param>
+        public static void DragCamera2Finger(GameObject camera, float minX, float maxX, float minY, float maxY, int direction = 1)
+        {
+            if (Input.touchCount >= 2)
+            {
+                Touch touchZero = Input.GetTouch(0);
+                Touch touchOne = Input.GetTouch(1);
+                Vector2 avergare = (touchOne.position + touchZero.position) / 2;
+                if (touchOne.phase == TouchPhase.Began)
+                {
+
+                    DCMousePostion = ScreenPointToWorldPoint(avergare);
+
+                }
+                if (touchOne.phase == TouchPhase.Moved)
+                {
+                    if (ScreenPointToWorldPoint(avergare) != DCMousePostion)
+                    {
+                        DCDir = ScreenPointToWorldPoint(avergare) - DCMousePostion;
+
+                        tempPos = direction * DCDir;
+                        campPos = camera.transform.position;
+
+                        if (campPos.x + tempPos.x > minX && campPos.x + tempPos.x < maxX)
+                            campPos.x += tempPos.x;
+                        if (campPos.y + tempPos.y > minY && campPos.y + tempPos.y < maxY)
+                            campPos.y += tempPos.y;
+
+
+                        camera.transform.position = campPos;
+                    }
+                }
+
+            }
+
         }
 
         public static void SmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset,
