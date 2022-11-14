@@ -276,6 +276,38 @@ namespace NOOD
             camera.transform.position = temp;
         }
 
+        public static void SmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset)
+        {
+
+            Vector3 temp = camera.transform.position;
+            Vector3 targetPosition = targetTransform.position + offset;
+            Vector3 currentSpeed = Vector3.zero;
+            Vector3 smoothPosition = Vector3.SmoothDamp(camera.transform.position, targetPosition, ref currentSpeed, smoothTime);
+            //Vector3 smoothPosition = Vector3.Lerp(temp, targetPosition, smoothTime);
+
+            temp.x = smoothPosition.x;
+            temp.y = smoothPosition.y;
+            temp.z = smoothPosition.z;
+
+            camera.transform.position = temp;
+        }
+
+        public static void LerpSmoothCameraFollow(UnityEngine.GameObject camera, float smoothTime, Transform targetTransform, Vector3 offset)
+        {
+
+            Vector3 temp = camera.transform.position;
+            Vector3 targetPosition = targetTransform.position + offset;
+            Vector3 currentSpeed = Vector3.zero;
+            //Vector3 smoothPosition = Vector3.SmoothDamp(camera.transform.position, targetPosition, ref currentSpeed, smoothTime);
+            Vector3 smoothPosition = Vector3.Lerp(temp, targetPosition, smoothTime*Time.fixedDeltaTime);
+
+            temp.x = smoothPosition.x;
+            temp.y = smoothPosition.y;
+            temp.z = smoothPosition.z;
+
+            camera.transform.position = temp;
+        }
+
         public static IEnumerator ObjectShake(UnityEngine.GameObject @object, float duration, float magnitude)
         {
             Vector3 OriginalPos = @object.transform.localPosition;
