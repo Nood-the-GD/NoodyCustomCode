@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace NOOD
 {
-    public static class NoodyCustomCode
+    public class NoodyCustomCode : MonoBehaviorInstance<NoodyCustomCode>
     {
         public static Thread newThread;
 
@@ -137,6 +137,20 @@ namespace NOOD
 
         //TODO: learn Unity.Jobs and create a Function to run many complex job in multithread
 
+        #endregion
+
+        #region Delay Function
+        public static void StartDelayFunction(Action action, float delaySecond)
+        {
+            GameObject delayObj = new GameObject("DelayActionGameObject");
+            DelayAction delay = delayObj.AddComponent<DelayAction>();
+
+            delay.StartDelayFunction(() =>
+            {
+                action?.Invoke();
+                Destroy(delay.gameObject, 0.5f);
+            }, delaySecond);
+        }
         #endregion
 
         #region Camera
