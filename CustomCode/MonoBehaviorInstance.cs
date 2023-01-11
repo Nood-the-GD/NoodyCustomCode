@@ -7,7 +7,7 @@ namespace NOOD
     public class MonoBehaviorInstance <T> : AbstractMonoBehaviour where T : MonoBehaviour
     {
         private static T instance;
-        public static T GetInstace
+        public static T GetInstance
         {
             get
             {
@@ -18,8 +18,7 @@ namespace NOOD
 
                 if (instance == null)
                 {
-                    GameObject newObj = new GameObject(typeof(T).ToString());
-                    instance = newObj.AddComponent<T>();
+                    Debug.Log("Errorrrrr: " + typeof(T) + " not exit");
                 }
                 return instance;
             }

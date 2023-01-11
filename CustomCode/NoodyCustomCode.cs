@@ -148,7 +148,6 @@ namespace NOOD
             delay.StartDelayFunction(() =>
             {
                 action?.Invoke();
-                Destroy(delay.gameObject, 0.5f);
             }, delaySecond);
         }
         #endregion
