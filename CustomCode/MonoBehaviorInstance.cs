@@ -7,7 +7,7 @@ namespace NOOD
     public class MonoBehaviorInstance <T> : AbstractMonoBehaviour where T : MonoBehaviour
     {
         private static T instance;
-        public static T GetInstance
+        public static T Instance
         {
             get
             {
