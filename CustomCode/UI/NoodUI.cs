@@ -7,9 +7,9 @@ namespace NOOD.UI
 {
     public class NoodUI : MonoBehaviour
     {
-        public static T Create<T>(Transform parent = null) where T : NoodUI
+        public static T Create<T>(string path, Transform parent = null) where T : NoodUI
         {
-            T prefab = Resources.FindObjectsOfTypeAll<T>()[0];
+            T prefab = Resources.Load<T>(path);
             T temp = Instantiate(prefab, parent);
             if(temp == null)
             {

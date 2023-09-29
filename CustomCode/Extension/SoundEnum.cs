@@ -1,4 +1,4 @@
 public enum SoundEnum
 { 
-	Click = 0,
+	First = 0,
 }

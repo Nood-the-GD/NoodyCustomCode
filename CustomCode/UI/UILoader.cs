@@ -3,13 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NOOD.UI;
+using NOOD.Data;
+using NOOD.Extension;
+using System.IO;
 
 namespace NOOD.UI
 {
     public class UILoader 
     {
         private static Dictionary<Type, object> _noodUIDic = new Dictionary<Type, object>();
-        private static Transform _parentUITransform;
+        private static Transform _parentUITransform = null;
+        private static Dictionary<string, string> _uiPathDic = new Dictionary<string, string>();
 
         #region UISetup
         /// <summary>
@@ -19,11 +23,36 @@ namespace NOOD.UI
         {
             _parentUITransform = transform;
         }
+        public static void SetUIPath(string uiType, string path)
+        {
+            path = path.Replace("Resources/", "");
+            path = path.Replace(".prefab", "");
+            if(FileExtension.IsExistFile(Path.Combine(Application.dataPath, "Datas", "UIDictionary"), ".txt"))
+            {
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary", ".txt");
+            }
+            if(_uiPathDic.ContainsKey(uiType))
+            {
+                _uiPathDic[uiType] = path;
+            }
+            else
+            {
+                _uiPathDic.Add(uiType, path);
+                Debug.Log(_uiPathDic.Keys.Count);
+            }
+            DataManager<Dictionary<string, string>>.SaveToDefaultFolder(_uiPathDic, "UIDictionary", ".txt");
+        }
         #endregion
 
         #region LoadUI
         public static T LoadUI<T>() where T : NoodUI
         {
+            if(FileExtension.IsExistFile(Path.Combine(Application.dataPath, "Datas", "UIDictionary"), ".txt"))
+            {
+                Debug.Log("Load File");
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary", ".txt");
+            }
+
             if(_noodUIDic.ContainsKey(typeof(T)))
             {
                 T ui = GetUI<T>();
@@ -32,7 +61,8 @@ namespace NOOD.UI
             }
             else
             {
-                T ui = NoodUI.Create<T>(_parentUITransform);
+                Debug.Log(_uiPathDic.Count);
+                T ui = NoodUI.Create<T>(_uiPathDic[typeof(T).FullName], _parentUITransform);
                 ui.Open();
                 AddUI(ui);
                 return ui;

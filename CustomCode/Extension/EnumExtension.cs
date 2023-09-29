@@ -2,6 +2,10 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
+using UnityEngine;
+using PlasticPipe.PlasticProtocol.Messages;
+using UnityEditor.VersionControl;
+// using UnityEngine.WSA;
 
 namespace NOOD.Extension
 {
@@ -69,6 +73,40 @@ namespace NOOD.Extension
                 var g = AssetDatabase.FindAssets($"t:Script {typeof(T).Name}");
                 return AssetDatabase.GUIDToAssetPath(g[0]);
             }
+        }
+    }
+
+    public static class FileExtension
+    {
+        public static FileStream CreateFile(string folderPath, string fileName, string extension)
+        {
+            string filePath = Path.Combine(folderPath, fileName + extension);
+            return File.Create(filePath);
+        }
+        public static void WriteToFile(string filePath, string text)
+        {
+            CreateFolderIfNeed(Path.GetDirectoryName(filePath));
+
+            using(StreamWriter file = File.CreateText(filePath))
+            {
+                file.Write(text);
+                AssetDatabase.ImportAsset(filePath);
+            }
+        }
+        public static string ReadFile(string filePath)
+        {
+            return File.ReadAllText(filePath);
+        }
+        public static void CreateFolderIfNeed(string directory)
+        {
+            if(!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+        }
+        public static bool IsExistFile(string fileName, string extension)
+        {
+            return File.Exists(Path.Combine(Application.dataPath, fileName + extension));
         }
     }
 }

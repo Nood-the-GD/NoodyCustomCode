@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEditor.IMGUI.Controls;
 using UnityEngine.UI;
+using NOOD.UI;
 
 namespace NOOD.NoodCustomEditor
 {
@@ -216,6 +217,7 @@ namespace NOOD.NoodCustomEditor
             {
                 CreatePrefab();
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+                UILoader.SetUIPath(nameSpace+"."+usingParams.className, GetPrefabPath());
             }else
             {
                 EditorUtility.DisplayDialog("Information", "Creating Classes Successful.", "OK");

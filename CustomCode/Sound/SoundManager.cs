@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using SerializableDictionary.Scripts;
+using NOOD.SerializableDictionary;
 using NOOD.Extension;
 using NOOD.NoodCustomEditor;
 using UnityEditor;
@@ -17,7 +17,7 @@ namespace NOOD.Sound
         {
             soundData = Resources.FindObjectsOfTypeAll<SoundDataSO>()[0];
             if(soundData == null)
-                Debug.LogError("Can't find SoundData, please create one using Create -> SoundData");
+                Debug.LogError("Can't find SoundData, please create one in Resources folder using Create -> SoundData");
         }
 
 #region SoundRegion
@@ -68,7 +68,7 @@ namespace NOOD.Sound
 
 #region MusicRegion
         /// <summary>
-        /// Play sound with the MusicPlayer gameobject if exists else create one then play music
+        /// Play sound with the MusicPlayer gameObject if exists else create one then play music
         /// </summary>
         /// <param name="musicEnum"></param>
         public static void PlayMusic(MusicEnum musicEnum)
