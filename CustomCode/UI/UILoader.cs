@@ -15,7 +15,7 @@ namespace NOOD.UI
         private static Transform _parentUITransform = null;
         private static Dictionary<string, string> _uiPathDic = new Dictionary<string, string>();
 
-        #region UISetup
+#region UISetup
         /// <summary>
         /// Set parent Transform to spawn all UIWindow under parent Transform
         /// </summary>
@@ -27,9 +27,9 @@ namespace NOOD.UI
         {
             path = path.Replace("Resources/", "");
             path = path.Replace(".prefab", "");
-            if(FileExtension.IsExistFile(Path.Combine(Application.dataPath, "Datas", "UIDictionary"), ".txt"))
+            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
-                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary", ".txt");
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary");
             }
             if(_uiPathDic.ContainsKey(uiType))
             {
@@ -42,15 +42,15 @@ namespace NOOD.UI
             }
             DataManager<Dictionary<string, string>>.SaveToDefaultFolder(_uiPathDic, "UIDictionary", ".txt");
         }
-        #endregion
+#endregion
 
-        #region LoadUI
+#region LoadUI
         public static T LoadUI<T>() where T : NoodUI
         {
-            if(FileExtension.IsExistFile(Path.Combine(Application.dataPath, "Datas", "UIDictionary"), ".txt"))
+            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
                 Debug.Log("Load File");
-                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary", ".txt");
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary");
             }
 
             if(_noodUIDic.ContainsKey(typeof(T)))
@@ -75,18 +75,18 @@ namespace NOOD.UI
                 _noodUIDic.Add(ui.GetType(), ui);
             }
         }
-        #endregion
+#endregion
 
-        #region CloseUI
+#region CloseUI
         public static void CloseUI<T>() where T : NoodUI
         {
             T ui = GetUI<T>();
             if(ui != null)
                 ui.Close();
         }
-        #endregion
+#endregion
 
-        #region GetUI
+#region GetUI
         public static T GetUI<T>() where T : NoodUI
         {
             if(_noodUIDic.ContainsKey(typeof(T)))
@@ -96,7 +96,7 @@ namespace NOOD.UI
             Debug.Log("Can't find " + typeof(T));
             return null;
         }
-        #endregion
+#endregion
 
     }
 }

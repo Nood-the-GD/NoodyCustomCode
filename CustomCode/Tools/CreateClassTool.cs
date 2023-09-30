@@ -6,6 +6,7 @@ using NOOD.NoodCustomEditor;
 
 namespace NOOD.Tools
 {
+#if UNITY_EDITOR
     public class CreateClassTool 
     {
         [MenuItem("Tools/NoodClassCreator")]
@@ -15,5 +16,5 @@ namespace NOOD.Tools
             ClassCreatorEditor.CreateWindow(currentDirectory, true);
         }
     }
-
+#endif
 }

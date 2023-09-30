@@ -7,7 +7,7 @@ using UnityEditor;
 using Newtonsoft.Json;
 using NOOD.Extension;
 using NOOD.Sound;
-using PlasticPipe.PlasticProtocol.Messages;
+using UnityEditor.iOS;
 
 namespace NOOD.Data
 {
@@ -33,6 +33,7 @@ namespace NOOD.Data
             }
         }
 
+#region LoadData
         // Load the json on disk and convert to T
         private static void LoadData()
         {
@@ -47,17 +48,30 @@ namespace NOOD.Data
                 data = JsonUtility.FromJson<T>(objString);
             }
         }
-        public static T LoadDataFromFile(string filePath)
+        public static T LoadDataFromFile(string filePath, string extension)
         {
-            string jsonStr = FileExtension.ReadFile(filePath);
+            string jsonStr = FileExtension.ReadFile(filePath, extension);
             return JsonConvert.DeserializeObject<T>(jsonStr);
         }
-        public static T LoadDataFromDefaultFile(string fileName, string extension)
+        /// <summary>
+        /// Load the data from Application.persistentDataPath/Datas
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <param name="extension"></param>
+        /// <returns></returns>
+        public static T LoadDataFromDefaultFile(string fileName)
         {
-            string jsonStr = FileExtension.ReadFile(Path.Combine(Application.dataPath, "Datas", fileName + extension));
-            return JsonConvert.DeserializeObject<T>(jsonStr);
+            if (FileExtension.IsExitFileInDefaultFolder(fileName))
+            {
+                string jsonStr = Resources.Load<TextAsset>(Path.Combine("Datas", fileName)).text;
+                return JsonConvert.DeserializeObject<T>(jsonStr);
+            }
+            Debug.LogWarning("Not exist file name " + fileName + " in default folder");
+            return default;
         }
+#endregion
 
+#region SaveData
         // Save the data to disk
         /// <summary>
         /// Save to PlayerPrefs
@@ -73,18 +87,21 @@ namespace NOOD.Data
 
         }
         /// <summary>
-        /// Save to Assets/Datas folder
+        /// Save to Assets/Resources/Datas folder
         /// </summary>
         /// <param name="data"></param>
         public static void SaveToDefaultFolder(T data, string fileName, string extension)
         {
             string jsonString = JsonConvert.SerializeObject(data, Formatting.Indented);
-            string path = Application.dataPath;
+            string path = Application.persistentDataPath;
             string fleName = fileName;
             string finalPath = Path.Combine(path, "Datas", fleName + extension);
-
+            Debug.Log(path);
+#if UNITY_EDITOR
             FileExtension.WriteToFile(finalPath, jsonString);
+#endif
         }
+#endregion
 
         // Return the data to default value
         public static void Clear()

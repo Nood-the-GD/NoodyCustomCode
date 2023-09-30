@@ -7,12 +7,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEditor;
-using UnityEditor.IMGUI.Controls;
 using UnityEngine.UI;
 using NOOD.UI;
 
 namespace NOOD.NoodCustomEditor
 {
+#if UNITY_EDITOR
     public class ClassCreatorEditor : EditorWindow
     {
         const string PATH_TO_TEMPLATE = "Scripts/Editor/Template/";
@@ -363,4 +363,5 @@ namespace NOOD.NoodCustomEditor
             }
         }
     }
+#endif
 }

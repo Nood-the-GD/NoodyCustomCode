@@ -3,9 +3,6 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using PlasticPipe.PlasticProtocol.Messages;
-using UnityEditor.VersionControl;
-// using UnityEngine.WSA;
 
 namespace NOOD.Extension
 {
@@ -37,6 +34,7 @@ namespace NOOD.Extension
         }
     }
 
+#if UNITY_EDITOR
     public static class EnumCreator
     {
         const string extension = ".cs";
@@ -63,7 +61,9 @@ namespace NOOD.Extension
             }
         }
     }
+#endif
 
+#if UNITY_EDITOR
     public static class RootPathExtension<T> 
     {
         public static string RootPath
@@ -75,6 +75,7 @@ namespace NOOD.Extension
             }
         }
     }
+#endif
 
     public static class FileExtension
     {
@@ -90,12 +91,11 @@ namespace NOOD.Extension
             using(StreamWriter file = File.CreateText(filePath))
             {
                 file.Write(text);
-                AssetDatabase.ImportAsset(filePath);
             }
         }
-        public static string ReadFile(string filePath)
+        public static string ReadFile(string filePath, string extension)
         {
-            return File.ReadAllText(filePath);
+            return File.ReadAllText(filePath + extension);
         }
         public static void CreateFolderIfNeed(string directory)
         {
@@ -104,9 +104,14 @@ namespace NOOD.Extension
                 Directory.CreateDirectory(directory);
             }
         }
-        public static bool IsExistFile(string fileName, string extension)
+        public static bool IsExistFile(string filePath)
         {
-            return File.Exists(Path.Combine(Application.dataPath, fileName + extension));
+            return File.Exists(filePath);
+        }
+        public static bool IsExitFileInDefaultFolder(string fileName)
+        {
+            UnityEngine.Object resources = Resources.Load(Path.Combine("Datas", fileName));
+            return true;
         }
     }
 }

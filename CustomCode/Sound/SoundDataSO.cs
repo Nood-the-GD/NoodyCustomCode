@@ -14,6 +14,7 @@ public class SoundDataSO : ScriptableObject
     [SerializeField] public SerializableDictionary<string, AudioClip> soundDic = new SerializableDictionary<string, AudioClip>();
     [SerializeField] public SerializableDictionary<string, AudioClip> musicDic = new SerializableDictionary<string, AudioClip>();
 
+#if UNITY_EDITOR
     public void GenerateSoundEnum()
     {
         string filePath = RootPathExtension<SoundManager>.RootPath;
@@ -22,4 +23,5 @@ public class SoundDataSO : ScriptableObject
         EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList());
         AssetDatabase.Refresh();
     }
+#endif
 }

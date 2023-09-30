@@ -6,6 +6,7 @@ using NOOD.Sound;
 
 namespace NOOD.NoodCustomEditor
 {
+#if UNITY_EDITOR
     [CustomEditor(typeof(SoundDataSO))]
     public class SoundManagerEditor : Editor
     {
@@ -20,4 +21,5 @@ namespace NOOD.NoodCustomEditor
             }
         }
     }
+#endif
 }
