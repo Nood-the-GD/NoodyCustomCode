@@ -6,6 +6,8 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
 using NOOD.Extension;
+using Codice.CM.SEIDInfo;
+using Unity.Plastic.Newtonsoft.Json.Linq;
 
 namespace NOOD.Data
 {
@@ -80,6 +82,7 @@ namespace NOOD.Data
         public static T LoadDataFromPlayerPref(string keyName)
         {
             string jsonStr = PlayerPrefs.GetString(keyName);
+            // Debug.Log(jsonStr);
             return JsonConvert.DeserializeObject<T>(jsonStr);
         }
 #endregion
@@ -131,7 +134,11 @@ namespace NOOD.Data
         /// <param name="data"> the data want to save </param>
         public static void SaveToPlayerPref(T data)
         {
-            string jsonStr = JsonConvert.SerializeObject(data, Formatting.Indented);
+            string jsonStr = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            });
+            Debug.Log(jsonStr);
             PlayerPrefs.SetString(typeof(T).Name, jsonStr);
             PlayerPrefs.Save();
         }
