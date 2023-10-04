@@ -6,8 +6,6 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
 using NOOD.Extension;
-using NOOD.Sound;
-using UnityEditor.iOS;
 
 namespace NOOD.Data
 {
@@ -18,7 +16,7 @@ namespace NOOD.Data
         // Get Instance of data
 
         /// <summary>
-        /// Only return if Data is saved with QuickSave else use LoadData(filePath) instead
+        /// Only return if Data is saved with QuickSave else use LoadData<>(filePath) instead
         /// </summary> 
         /// <value></value>
         public static T Data
@@ -54,7 +52,7 @@ namespace NOOD.Data
             return JsonConvert.DeserializeObject<T>(jsonStr);
         }
         /// <summary>
-        /// Load the data from Application.persistentDataPath/Datas
+        /// Load the data from Resources/Datas
         /// </summary>
         /// <param name="fileName"></param>
         /// <param name="extension"></param>
