@@ -16,8 +16,8 @@ namespace NOOD.Data
         // Get Instance of data
 
         /// <summary>
-        /// Only return if Data is saved with QuickSave else use LoadData<>(filePath) instead
-        /// </summary> 
+        /// Only return data if data is save to PlayerPrefs
+        /// </summary>
         /// <value></value>
         public static T Data
         {
@@ -25,27 +25,32 @@ namespace NOOD.Data
             {
                 if(data == null)
                 {
-                    LoadData();
+                    QuickLoad();
                 }
                 return data;
             }
         }
 
 #region LoadData
-        // Load the json on disk and convert to T
-        private static void LoadData()
+        /// <summary>
+        /// 
+        /// </summary> 
+        private static void QuickLoad()
         {
-            string objString = PlayerPrefs.GetString(typeof(T).ToString(), "");
-            if(objString == "")
+            if(PlayerPrefs.HasKey(typeof(T).Name))
+                data = LoadDataFromPlayerPref(typeof(T).Name);
+            if(data == null) 
             {
                 data = new T();
                 QuickSave();
             }
-            else
-            {
-                data = JsonUtility.FromJson<T>(objString);
-            }
         }
+        /// <summary>
+        /// You must have disk access right to use this function
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="extension"></param>
+        /// <returns></returns> 
         public static T LoadDataFromFile(string filePath, string extension)
         {
             string jsonStr = FileExtension.ReadFile(filePath, extension);
@@ -57,7 +62,7 @@ namespace NOOD.Data
         /// <param name="fileName"></param>
         /// <param name="extension"></param>
         /// <returns></returns>
-        public static T LoadDataFromDefaultFile(string fileName)
+        public static T LoadDataFromDefaultFolder(string fileName)
         {
             if (FileExtension.IsExitFileInDefaultFolder(fileName))
             {
@@ -67,37 +72,68 @@ namespace NOOD.Data
             Debug.LogWarning("Not exist file name " + fileName + " in default folder");
             return default;
         }
+        /// <summary>
+        /// Return the value base on key in PlayerPref, use this for data written on build device
+        /// </summary>
+        /// <param name="keyName">
+        /// <returns></returns>
+        public static T LoadDataFromPlayerPref(string keyName)
+        {
+            string jsonStr = PlayerPrefs.GetString(keyName);
+            return JsonConvert.DeserializeObject<T>(jsonStr);
+        }
 #endregion
 
 #region SaveData
-        // Save the data to disk
         /// <summary>
-        /// Save to PlayerPrefs
+        /// Save to PlayerPrefs, this will save to PlayerPrefs by default
         /// </summary>
         public static void QuickSave()
         {
-            PlayerPrefs.SetString(typeof(T).ToString(), JsonUtility.ToJson(data));
-            PlayerPrefs.Save();
+            data = LoadDataFromPlayerPref(typeof(T).Name);
+
+            // Create new data if don't exist
+            data ??= new T();
+
+            // Save file to Resources/fileName
+            SaveToPlayerPref(data);
         }
+        /// <summary>
+        /// You must have disk access right to use this function
+        /// </summary>
+        /// <param name="filePath"></param>
+        /// <param name="data"></param> 
+#if UNITY_EDITOR
         public static void SaveToFile(string filePath, T data)
         {
             string jsonString = JsonConvert.SerializeObject(data);
-
+            FileExtension.WriteToFile(filePath, jsonString);
+#endif
         }
         /// <summary>
-        /// Save to Assets/Resources/Datas folder
+        /// Save to Assets/Resources/Datas folder, do not use this function to save data on device
         /// </summary>
         /// <param name="data"></param>
+#if UNITY_EDITOR
         public static void SaveToDefaultFolder(T data, string fileName, string extension)
         {
             string jsonString = JsonConvert.SerializeObject(data, Formatting.Indented);
-            string path = Application.persistentDataPath;
+            string path = Path.Combine(Application.dataPath, "Resources");
             string fleName = fileName;
             string finalPath = Path.Combine(path, "Datas", fleName + extension);
             Debug.Log(path);
-#if UNITY_EDITOR
             FileExtension.WriteToFile(finalPath, jsonString);
 #endif
+        }
+        /// <summary>
+        /// Save the data to PlayerPref, this data can be written on build device
+        /// </summary>
+        /// <param name="data"> the data want to save </param>
+        public static void SaveToPlayerPref(T data)
+        {
+            string jsonStr = JsonConvert.SerializeObject(data, Formatting.Indented);
+            PlayerPrefs.SetString(typeof(T).Name, jsonStr);
+            PlayerPrefs.Save();
         }
 #endregion
 

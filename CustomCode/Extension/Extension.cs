@@ -111,6 +111,7 @@ namespace NOOD.Extension
         public static bool IsExitFileInDefaultFolder(string fileName)
         {
             UnityEngine.Object resources = Resources.Load(Path.Combine("Datas", fileName));
+            if (resources == null) return false;
             return true;
         }
     }

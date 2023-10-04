@@ -29,7 +29,7 @@ namespace NOOD.UI
             path = path.Replace(".prefab", "");
             if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
-                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary");
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
             if(_uiPathDic.ContainsKey(uiType))
             {
@@ -50,7 +50,7 @@ namespace NOOD.UI
             if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
                 Debug.Log("Load File");
-                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFile("UIDictionary");
+                _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
 
             if(_noodUIDic.ContainsKey(typeof(T)))
