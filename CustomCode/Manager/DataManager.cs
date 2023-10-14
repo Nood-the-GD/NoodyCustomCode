@@ -6,8 +6,7 @@ using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
 using NOOD.Extension;
-using Codice.CM.SEIDInfo;
-using Unity.Plastic.Newtonsoft.Json.Linq;
+using UnityEngine.InputSystem;
 
 namespace NOOD.Data
 {
@@ -27,6 +26,7 @@ namespace NOOD.Data
             {
                 if(data == null)
                 {
+                    Debug.Log(typeof(T).Name);
                     QuickLoad();
                 }
                 return data;
@@ -93,11 +93,6 @@ namespace NOOD.Data
         /// </summary>
         public static void QuickSave()
         {
-            data = LoadDataFromPlayerPref(typeof(T).Name);
-
-            // Create new data if don't exist
-            data ??= new T();
-
             // Save file to Resources/fileName
             SaveToPlayerPref(data);
         }
@@ -134,10 +129,7 @@ namespace NOOD.Data
         /// <param name="data"> the data want to save </param>
         public static void SaveToPlayerPref(T data)
         {
-            string jsonStr = JsonConvert.SerializeObject(data, Formatting.Indented, new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            });
+            string jsonStr = JsonUtility.ToJson(data);
             Debug.Log(jsonStr);
             PlayerPrefs.SetString(typeof(T).Name, jsonStr);
             PlayerPrefs.Save();

@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace NOOD.Extension
 {
@@ -113,6 +114,21 @@ namespace NOOD.Extension
             UnityEngine.Object resources = Resources.Load(Path.Combine("Datas", fileName));
             if (resources == null) return false;
             return true;
+        }
+    }
+    public static class InputActionExtension
+    {
+        public static void SaveKeyBinding(this InputAction inputAction)
+        {
+            PlayerPrefs.SetString(inputAction.name, inputAction.SaveBindingOverridesAsJson());
+            PlayerPrefs.Save();
+        }
+        public static void LoadKeyBinding(this InputAction inputAction)
+        {
+            if(PlayerPrefs.HasKey(inputAction.name))
+            {
+                inputAction.LoadBindingOverridesFromJson(PlayerPrefs.GetString(inputAction.name));
+            }
         }
     }
 }
