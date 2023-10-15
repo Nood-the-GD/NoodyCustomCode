@@ -11,9 +11,9 @@ namespace NOOD.UI
 {
     public class UILoader 
     {
-        private static Dictionary<Type, object> _noodUIDic = new Dictionary<Type, object>();
         private static Transform _parentUITransform = null;
-        private static Dictionary<string, string> _uiPathDic = new Dictionary<string, string>();
+        private static Dictionary<Type, object> _noodUIDic = new();
+        private static Dictionary<string, string> _uiPathDic = new();
 
 #region UISetup
         /// <summary>
@@ -49,13 +49,14 @@ namespace NOOD.UI
         {
             if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
-                Debug.Log("Load File");
                 _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
 
             if(_noodUIDic.ContainsKey(typeof(T)))
             {
+                // Get UI gamObject in the scene
                 T ui = GetUI<T>();
+                ui.gameObject.SetActive(true);
                 ui.Open();
                 return ui;
             }
@@ -81,8 +82,7 @@ namespace NOOD.UI
         public static void CloseUI<T>() where T : NoodUI
         {
             T ui = GetUI<T>();
-            if(ui != null)
-                ui.Close();
+            ui?.Close();
         }
 #endregion
 
