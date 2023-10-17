@@ -12,19 +12,19 @@ namespace NOOD.NoodCustomEditor
         public bool isUI = true;
         public string nameSpace = "";
         public string baseName = "";
-        public string className => isUI ? "UI" + baseName : baseName;
-        public string prefabPath 
+        public string ClassName => isUI ? "UI" + baseName : baseName;
+        public string PrefabPath 
         {
             get 
             {
                 if (!nameSpace.Contains("."))
                 {
-                    return "Prefab/" + className;
+                    return "Prefab/" + ClassName;
                 }
-                return "Prefab/" + nameSpace.Replace(".", "/") + "/" + className;
+                return "Prefab/" + nameSpace.Replace(".", "/") + "/" + ClassName;
             }
         }
-        public string classPath
+        public string ClassPath
         {
             get
             {
@@ -32,7 +32,7 @@ namespace NOOD.NoodCustomEditor
                 {
                     return "";
                 }
-                return $"{prefabPath.Replace("Prefab/Game", "")}".Replace(className, "");
+                return $"{PrefabPath.Replace("Prefab/Game", "")}".Replace(ClassName, "");
             }
         }
         public bool hasRootCanvas = true;
@@ -60,15 +60,15 @@ namespace NOOD.NoodCustomEditor
             text += "namespace " + p.nameSpace + "\n";
             text += "{\n";
             if (p.isUI == false)
-                text += "\tpublic class " + p.className + ": MonoBehaviour \n";
+                text += "\tpublic class " + p.ClassName + ": MonoBehaviour \n";
             else
-                text += $"\tpublic class {p.className} : {nameof(NoodUI)} \n";
+                text += $"\tpublic class {p.ClassName} : {nameof(NoodUI)} \n";
             
             text += "\t{\n";
 
-            text += "\t\tpublic static " + p.className + " Create(Transform parent = null)\n";
+            text += "\t\tpublic static " + p.ClassName + " Create(Transform parent = null)\n";
             text += "\t\t{\n";
-            text += "\t\t\treturn Instantiate(Resources.Load<" + p.className + ">(\"" + p.prefabPath + "\"), parent);\n";
+            text += "\t\t\treturn Instantiate(Resources.Load<" + p.ClassName + ">(\"" + p.PrefabPath + "\"), parent);\n";
             text += "\t\t}\n";
 
             text += "\t}\n";

@@ -29,7 +29,7 @@ namespace NOOD.NoodCustomEditor
         bool isUI = false;
         TemplateUsingParams usingParams = new TemplateUsingParams();
 
-        string viewAssetPath => assetDirectory + usingParams.className + ".cs";
+        string viewAssetPath => assetDirectory + usingParams.ClassName + ".cs";
 
 
         public static ClassCreatorEditor CreateWindow(string currentDirectory, bool isUI)
@@ -48,7 +48,7 @@ namespace NOOD.NoodCustomEditor
 
         private void OnGUI()
         {
-            assetDirectory = "Scripts/Game/" + usingParams.classPath;
+            assetDirectory = "Scripts/Game/" + usingParams.ClassPath;
             bool anyErrors = false;
 
             GUIStyle bold = new GUIStyle(EditorStyles.label);
@@ -115,7 +115,7 @@ namespace NOOD.NoodCustomEditor
                 usingParams.baseName = baseName;
 
                 EditorGUILayout.BeginHorizontal();
-                EditorGUILayout.LabelField($"{usingParams.className}", bold);
+                EditorGUILayout.LabelField($"{usingParams.ClassName}", bold);
                 EditorGUILayout.EndHorizontal();
 
                 EditorGUILayout.BeginHorizontal();
@@ -217,7 +217,7 @@ namespace NOOD.NoodCustomEditor
             {
                 CreatePrefab();
                 AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
-                UILoader.SetUIPath(nameSpace+"."+usingParams.className, GetPrefabPath());
+                UILoader.SetUIPath(nameSpace+"."+usingParams.ClassName, GetPrefabPath());
             }else
             {
                 EditorUtility.DisplayDialog("Information", "Creating Classes Successful.", "OK");
@@ -226,7 +226,7 @@ namespace NOOD.NoodCustomEditor
 
         public string GetPrefabPath()
         {
-            return "Resources/" + usingParams.prefabPath + ".prefab";
+            return "Resources/" + usingParams.PrefabPath + ".prefab";
         }        
 
         private void CreatePrefab()
@@ -248,7 +248,7 @@ namespace NOOD.NoodCustomEditor
                 scaler.referenceResolution = new Vector2(1080, 1920);
             }
 
-            string typeFullName = nameSpace + (".") + usingParams.className;           
+            string typeFullName = nameSpace + (".") + usingParams.ClassName;           
 
             var prefabSavePath = "Assets/" + GetPrefabPath();
 
