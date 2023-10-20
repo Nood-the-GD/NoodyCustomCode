@@ -19,10 +19,13 @@ namespace NOOD.UI
         }
         
 
-        public virtual void Open(){}
+        public virtual void Open()
+        {
+            gameObject.SetActive(true);
+        }
         public virtual void Close()
         {
-            this.gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 }
