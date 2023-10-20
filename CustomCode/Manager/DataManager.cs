@@ -1,12 +1,7 @@
-using System.Linq;
 using System.IO;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using Newtonsoft.Json;
 using NOOD.Extension;
-using UnityEngine.InputSystem;
 
 namespace NOOD.Data
 {
@@ -24,7 +19,7 @@ namespace NOOD.Data
         {
             get
             {
-                if(data == null)
+                if (data == null)
                 {
                     Debug.Log(typeof(T).Name);
                     QuickLoad();
@@ -33,15 +28,18 @@ namespace NOOD.Data
             }
         }
 
-#region LoadData
+        #region LoadData
         /// <summary>
         /// 
         /// </summary> 
         private static void QuickLoad()
         {
-            if(PlayerPrefs.HasKey(typeof(T).Name))
+            if (PlayerPrefs.HasKey(typeof(T).Name))
+            {
                 data = LoadDataFromPlayerPref(typeof(T).Name);
-            if(data == null) 
+            }
+
+            if (data == null)
             {
                 data = new T();
                 QuickSave();
@@ -85,9 +83,9 @@ namespace NOOD.Data
             // Debug.Log(jsonStr);
             return JsonConvert.DeserializeObject<T>(jsonStr);
         }
-#endregion
+        #endregion
 
-#region SaveData
+        #region SaveData
         /// <summary>
         /// Save to PlayerPrefs, this will save to PlayerPrefs by default
         /// </summary>
@@ -96,23 +94,21 @@ namespace NOOD.Data
             // Save file to Resources/fileName
             SaveToPlayerPref(data);
         }
+#if UNITY_EDITOR
         /// <summary>
         /// You must have disk access right to use this function
         /// </summary>
         /// <param name="filePath"></param>
         /// <param name="data"></param> 
-#if UNITY_EDITOR
         public static void SaveToFile(string filePath, T data)
         {
             string jsonString = JsonConvert.SerializeObject(data);
             FileExtension.WriteToFile(filePath, jsonString);
-#endif
         }
         /// <summary>
         /// Save to Assets/Resources/Datas folder, do not use this function to save data on device
         /// </summary>
         /// <param name="data"></param>
-#if UNITY_EDITOR
         public static void SaveToDefaultFolder(T data, string fileName, string extension)
         {
             string jsonString = JsonConvert.SerializeObject(data, Formatting.Indented);
@@ -121,8 +117,8 @@ namespace NOOD.Data
             string finalPath = Path.Combine(path, "Datas", fleName + extension);
             Debug.Log(path);
             FileExtension.WriteToFile(finalPath, jsonString);
-#endif
         }
+#endif
         /// <summary>
         /// Save the data to PlayerPref, this data can be written on build device
         /// </summary>
@@ -134,7 +130,7 @@ namespace NOOD.Data
             PlayerPrefs.SetString(typeof(T).Name, jsonStr);
             PlayerPrefs.Save();
         }
-#endregion
+        #endregion
 
         // Return the data to default value
         public static void Clear()

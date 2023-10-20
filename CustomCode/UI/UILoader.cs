@@ -1,21 +1,18 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using NOOD.UI;
 using NOOD.Data;
 using NOOD.Extension;
-using System.IO;
 
 namespace NOOD.UI
 {
-    public class UILoader 
+    public class UILoader
     {
         private static Dictionary<Type, object> _noodUIDic = new Dictionary<Type, object>();
         private static Transform _parentUITransform = null;
         private static Dictionary<string, string> _uiPathDic = new Dictionary<string, string>();
 
-#region UISetup
+        #region UISetup
         /// <summary>
         /// Set parent Transform to spawn all UIWindow under parent Transform
         /// </summary>
@@ -23,15 +20,16 @@ namespace NOOD.UI
         {
             _parentUITransform = transform;
         }
+#if UNITY_EDITOR
         public static void SetUIPath(string uiType, string path)
         {
             path = path.Replace("Resources/", "");
             path = path.Replace(".prefab", "");
-            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
+            if (FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
                 _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
-            if(_uiPathDic.ContainsKey(uiType))
+            if (_uiPathDic.ContainsKey(uiType))
             {
                 _uiPathDic[uiType] = path;
             }
@@ -42,18 +40,19 @@ namespace NOOD.UI
             }
             DataManager<Dictionary<string, string>>.SaveToDefaultFolder(_uiPathDic, "UIDictionary", ".txt");
         }
-#endregion
+#endif
+        #endregion
 
-#region LoadUI
+        #region LoadUI
         public static T LoadUI<T>() where T : NoodUI
         {
-            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
+            if (FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
             {
-                Debug.Log("Load File");
+                Debug.Log("Load Class: " + typeof(T).Name);
                 _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
 
-            if(_noodUIDic.ContainsKey(typeof(T)))
+            if (_noodUIDic.ContainsKey(typeof(T)))
             {
                 T ui = GetUI<T>();
                 ui.Open();
@@ -75,28 +74,27 @@ namespace NOOD.UI
                 _noodUIDic.Add(ui.GetType(), ui);
             }
         }
-#endregion
+        #endregion
 
-#region CloseUI
+        #region CloseUI
         public static void CloseUI<T>() where T : NoodUI
         {
             T ui = GetUI<T>();
-            if(ui != null)
-                ui.Close();
+            ui?.Close();
         }
-#endregion
+        #endregion
 
-#region GetUI
+        #region GetUI
         public static T GetUI<T>() where T : NoodUI
         {
-            if(_noodUIDic.ContainsKey(typeof(T)))
+            if (_noodUIDic.ContainsKey(typeof(T)))
             {
-                return (T) _noodUIDic[typeof(T)];
+                return (T)_noodUIDic[typeof(T)];
             }
             Debug.Log("Can't find " + typeof(T));
             return null;
         }
-#endregion
+        #endregion
 
     }
 }
