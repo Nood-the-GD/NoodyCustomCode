@@ -23,7 +23,6 @@ namespace NOOD
         {
             StopAllCoroutines();
             onCompleteLoop?.Invoke();
-            Debug.Log("Complete");
             Destroy(this.gameObject, 0.2f);
         }
         

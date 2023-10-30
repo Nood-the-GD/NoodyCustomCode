@@ -23,6 +23,7 @@ namespace NOOD.UI
         {
             _parentUITransform = transform;
         }
+#if UNITY_EDITOR
         public static void SetUIPath(string uiType, string path)
         {
             path = path.Replace("Resources/", "");
@@ -42,6 +43,7 @@ namespace NOOD.UI
             }
             DataManager<Dictionary<string, string>>.SaveToDefaultFolder(_uiPathDic, "UIDictionary", ".txt");
         }
+#endif
 #endregion
 
 #region LoadUI
@@ -74,6 +76,10 @@ namespace NOOD.UI
             if (!_noodUIDic.ContainsKey(ui.GetType()))
             {
                 _noodUIDic.Add(ui.GetType(), ui);
+            }
+            else
+            {
+                _noodUIDic[ui.GetType()] = ui;
             }
         }
 #endregion

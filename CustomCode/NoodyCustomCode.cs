@@ -454,6 +454,7 @@ namespace NOOD
                 image.color = color;
                 if (color.a <= endValue)
                 {
+                    image.gameObject.SetActive(false);
                     coroutineScript.Complete();
                 }
             }, pauseTimePerLoop);
@@ -486,6 +487,7 @@ namespace NOOD
         public static void FadeInImage(Image image, float maxValue, float pauseTimePerLoop)
         {
             GameObject fadeInObj = new GameObject("FadeInObj");
+            image.gameObject.SetActive(true);
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
             coroutineScript.StartCoroutineLoop(() =>
@@ -535,6 +537,7 @@ namespace NOOD
                 textMeshProUGUI.color = color;
                 if(textMeshProUGUI.color.a <= endValue)
                 {
+                    textMeshProUGUI.gameObject.SetActive(false);
                     coroutineScript.Complete();
                 }
             }, pauseTimePerLoop);
@@ -565,6 +568,7 @@ namespace NOOD
         /// <param name="pauseTimePerLoop"></param>
         public static void FadeInTextMeshUGUI(TextMeshProUGUI textMeshProUGUI, float maxValue, float pauseTimePerLoop)
         {
+            textMeshProUGUI.gameObject.SetActive(true);
             GameObject fadeInObj = new GameObject("FadeInObj");
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
@@ -578,6 +582,19 @@ namespace NOOD
                     coroutineScript.Complete();
                 }
             }, pauseTimePerLoop);
+        }
+        #endregion
+    
+        #region CoroutineFunction
+        /// <summary>
+        /// Create a coroutineScript for coroutine loop function
+        /// </summary>
+        /// <returns></returns>
+        public static CoroutineScript CreateNewCoroutineObj()
+        {
+            GameObject fadeInObj = new GameObject("CoroutineObj");
+            CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
+            return coroutineScript;
         }
         #endregion
     }
