@@ -35,6 +35,17 @@ namespace NOOD.Extension
         }
     }
 
+    public static class CollectionExtension
+    {
+        public static void DeActiveAllGameObjectInList<T>(this List<T> list) where T : MonoBehaviour
+        {
+            foreach(T element in list)
+            {
+                element.gameObject.SetActive(false);
+            }
+        }
+    }
+
 #if UNITY_EDITOR
     public static class EnumCreator
     {

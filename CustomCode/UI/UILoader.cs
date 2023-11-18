@@ -23,6 +23,10 @@ namespace NOOD.UI
         {
             _parentUITransform = transform;
         }
+        public static void ResetData()
+        {
+            _noodUIDic = new();
+        }
 #if UNITY_EDITOR
         public static void SetUIPath(string uiType, string path)
         {
@@ -64,7 +68,7 @@ namespace NOOD.UI
             }
             else
             {
-                Debug.Log(_uiPathDic.Count);
+                Debug.Log("Create " + typeof(T));
                 T ui = NoodUI.Create<T>(_uiPathDic[typeof(T).FullName], _parentUITransform);
                 ui.Open();
                 AddUI(ui);
@@ -99,7 +103,7 @@ namespace NOOD.UI
             {
                 return (T) _noodUIDic[typeof(T)];
             }
-            Debug.Log("Can't find " + typeof(T));
+            Debug.LogError("Can't find " + typeof(T));
             return null;
         }
 #endregion
