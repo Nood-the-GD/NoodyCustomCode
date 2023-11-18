@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 namespace NOOD.ModifiableStats
 {
+    [System.Serializable]
     public class ModifiableStats<T> where T : struct
     {
         private T initValue;

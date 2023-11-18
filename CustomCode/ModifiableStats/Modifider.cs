@@ -10,6 +10,7 @@ namespace NOOD.ModifiableStats
         Divide
     }
 
+    [System.Serializable]
     public class Modifier<T> where T : struct
     {
         ModifyType modify;
