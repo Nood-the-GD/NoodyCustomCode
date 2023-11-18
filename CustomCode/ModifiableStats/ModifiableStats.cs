@@ -20,11 +20,24 @@ namespace NOOD.ModifiableStats
         }
         List<Modifier<T>> modifiers = new();
 
+        #region Constructor
         // Constructor
         public ModifiableStats(T value)
         {
             this.initValue = value;
         }
+        public ModifiableStats()
+        {
+            this.initValue = default;
+        }
+        #endregion
+
+        #region Setup
+        public void SetInitValue(T value)
+        {
+            this.initValue = value;
+        }
+        #endregion
 
         public void AddModifier(ModifyType modify, T value)
         {
