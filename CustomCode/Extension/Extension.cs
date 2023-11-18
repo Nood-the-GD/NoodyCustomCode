@@ -35,6 +35,20 @@ namespace NOOD.Extension
         }
     }
 
+    public static class ListExtension
+    {
+        public static T GetRandom<T>(this List<T> list) where T : class
+        {
+            T result = null;
+            if(list.Count > 0 && list != null)
+            {
+                int r = UnityEngine.Random.Range(0, list.Count - 1);
+                result = list[r];
+            }
+            return result;
+        }
+    }
+
 #if UNITY_EDITOR
     public static class EnumCreator
     {
