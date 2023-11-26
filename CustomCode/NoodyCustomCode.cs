@@ -5,6 +5,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using ImpossibleOdds;
 
 namespace NOOD
 {
@@ -595,6 +596,27 @@ namespace NOOD
             GameObject fadeInObj = new GameObject("CoroutineObj");
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
             return coroutineScript;
+        }
+        #endregion
+
+        #region Events
+        /// <summary>
+        /// UnSubscribe all function belong to currentObject from staticType
+        /// </summary>
+        /// <param name="staticType"></param>
+        /// <param name="currentObject"></param>
+        public static void UnSubscribeFromStatic(Type staticType, object currentObject)
+        {
+            staticType.PurgeDelegatesOf(currentObject);
+        }
+        /// <summary>
+        /// UnSubscribe all function belong to functionObject from delegateObject
+        /// </summary>
+        /// <param name="delegateObject"> object that hold events </param>
+        /// <param name="functionObject"> object that hold functions </param>
+        public static void UnSubscribeAllEvent(object delegateObject, object functionObject)
+        {
+            delegateObject.PurgeDelegatesOf(functionObject);
         }
         #endregion
     }
