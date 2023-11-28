@@ -4,6 +4,7 @@ using System;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
 
@@ -19,14 +20,12 @@ namespace NOOD
             Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             return cam.ScreenToWorldPoint(screenPoint);
         }
-
         public static Vector3 MouseToWorldPoint()
         {
             Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             Vector3 mousePos = Input.mousePosition;
             return cam.ScreenToWorldPoint(mousePos);
         }
-
         public static Vector3 MouseToWorldPoint2D()
         {
             Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -34,31 +33,26 @@ namespace NOOD
             Vector3 temp = new Vector3(mousePos.x, mousePos.y, 0f);
             return temp;
         }
-
         public static Vector2 WorldPointToScreenPoint(Vector3 worldPoint)
         {
             Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
             return cam.WorldToScreenPoint(worldPoint);
         }
-
         public static void LookToMouse2D(Transform objectTransform)
         {
             Vector3 mousePosition = MouseToWorldPoint();
             LookToPoint2D(objectTransform, mousePosition);
         }
-
         public static void LookToPoint2D(Transform objectTransform, Vector3 targetPosition)
         {
             Vector3 lookDirection = LookDirection(objectTransform.position, targetPosition);
             float angle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
             objectTransform.localEulerAngles = new Vector3(0f, 0f, angle);
         }
-
         public static Vector3 LookDirection(Vector3 FromPosition, Vector3 targetPosition)
         {
             return (targetPosition - FromPosition).normalized;
         }
-
         public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float degrees, float radius)
         {
             float radians = degrees * Mathf.Deg2Rad;
@@ -67,7 +61,6 @@ namespace NOOD
             Vector3 pos = new Vector3(x, y, centerPosition.z);
             return pos += centerPosition;
         }
-
         public static Vector3 GetPointAroundAPosition2D(Vector3 centerPosition, float radius)
         {
             int degrees = UnityEngine.Random.Range(0, 360);
@@ -78,7 +71,6 @@ namespace NOOD
             pos *= radius;
             return pos += centerPosition;
         }
-
         public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float degrees, float radius)
         {
             float radians = degrees * Mathf.Deg2Rad;
@@ -87,7 +79,6 @@ namespace NOOD
             Vector3 pos = new Vector3(x, centerPosition.y, z);
             return pos += centerPosition;
         }
-
         public static Vector3 GetPointAroundAPosition3D(Vector3 centerPosition, float radius)
         {
             int degrees = UnityEngine.Random.Range(0, 360);
@@ -97,6 +88,21 @@ namespace NOOD
             Vector3 pos = new Vector3(x, centerPosition.y, z);
             pos *= radius;
             return pos += centerPosition;
+        }
+        //Returns 'true' if we touched or hovering on Unity UI element.
+        public static bool IsPointerOverUIElement()
+        {
+            return EventSystem.current.IsPointerOverGameObject();
+        }
+    
+        //Gets all event system raycast results of current mouse or touch position.
+        public static List<RaycastResult> GetEventSystemRaycastResults()
+        {
+            PointerEventData eventData = new PointerEventData(EventSystem.current);
+            eventData.position = Input.mousePosition;
+            List<RaycastResult> raycastResults = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(eventData, raycastResults);
+            return raycastResults;
         }
         #endregion
 
