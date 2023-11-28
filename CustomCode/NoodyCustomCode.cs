@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
+using System.Linq;
 
 namespace NOOD
 {
@@ -92,9 +93,22 @@ namespace NOOD
         //Returns 'true' if we touched or hovering on Unity UI element.
         public static bool IsPointerOverUIElement()
         {
-            return EventSystem.current.IsPointerOverGameObject();
+            return GetCurrentPointObject().layer == 5; // 5 is index of Layer UI
         }
-    
+        public static GameObject GetCurrentPointObject()
+        {
+            return GetEventSystemRaycastResults()[0].gameObject;
+        }
+        public static GameObject GetRaycastGameObject2D()
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction);
+            if(hit.collider != null)
+            {
+                return hit.collider.gameObject;
+            }
+            else return null;
+        }
         //Gets all event system raycast results of current mouse or touch position.
         public static List<RaycastResult> GetEventSystemRaycastResults()
         {
