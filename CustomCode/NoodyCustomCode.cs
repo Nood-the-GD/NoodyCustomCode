@@ -97,7 +97,9 @@ namespace NOOD
         }
         public static GameObject GetCurrentPointObject()
         {
-            return GetEventSystemRaycastResults()[0].gameObject;
+            if (GetEventSystemRaycastResults() != null && GetEventSystemRaycastResults().Count > 0)
+                return GetEventSystemRaycastResults()[0].gameObject;
+            else return null;
         }
         public static GameObject GetRaycastGameObject2D()
         {
