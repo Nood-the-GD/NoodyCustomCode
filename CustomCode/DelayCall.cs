@@ -32,8 +32,9 @@ namespace NOOD
         }
     }
 
-    class DelayAction : MonoBehaviour
+    public class DelayAction : MonoBehaviour
     {
+        public Action OnComplete;
         Action delayAction;
         float delaySecond;
 
@@ -41,6 +42,7 @@ namespace NOOD
         {
             yield return new WaitForSeconds(delaySecond);
             delayAction?.Invoke();
+            OnComplete?.Invoke();
             Destroy(this.gameObject);
         }
 

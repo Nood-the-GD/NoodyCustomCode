@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
 using System.Linq;
+using System.Resources;
 
 namespace NOOD
 {
@@ -169,7 +170,7 @@ namespace NOOD
         #endregion
 
         #region Delay Function
-        public static void StartDelayFunction(Action action, float delaySecond)
+        public static DelayAction StartDelayFunction(Action action, float delaySecond)
         {
             GameObject delayObj = new GameObject("DelayActionGameObject");
             DelayAction delay = delayObj.AddComponent<DelayAction>();
@@ -178,6 +179,7 @@ namespace NOOD
             {
                 action?.Invoke();
             }, delaySecond);
+            return delay;
         }
         #endregion
 
@@ -478,9 +480,10 @@ namespace NOOD
                 if (color.a <= endValue)
                 {
                     image.gameObject.SetActive(false);
-                    coroutineScript.Complete();
+                    return true;
                 }
-            }, pauseTimePerLoop);
+                return false;
+            }, pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -520,9 +523,10 @@ namespace NOOD
                 image.color = color;
                 if(image.color.a >= maxValue)
                 {
-                    coroutineScript.Complete();
+                    return true;
                 }
-            }, pauseTimePerLoop);
+                return false;
+            }, pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -561,9 +565,10 @@ namespace NOOD
                 if(textMeshProUGUI.color.a <= endValue)
                 {
                     textMeshProUGUI.gameObject.SetActive(false);
-                    coroutineScript.Complete();
+                    return true;
                 }
-            }, pauseTimePerLoop);
+                return false;
+            }, pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -602,9 +607,10 @@ namespace NOOD
                 textMeshProUGUI.color = color;
                 if(textMeshProUGUI.color.a >= maxValue)
                 {
-                    coroutineScript.Complete();
+                    return true;
                 }
-            }, pauseTimePerLoop);
+                return false;
+            }, pauseTimePerLoop, -1);
         }
         #endregion
     
@@ -618,6 +624,56 @@ namespace NOOD
             GameObject fadeInObj = new GameObject("CoroutineObj");
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
             return coroutineScript;
+        }
+        /// <summary>
+        /// Create Coroutine loop with loopTime
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="loopTime"> How many times function will loop </param>
+        public static void CreateNewCoroutineLoop(Action action, int loopTime)
+        {
+            CreateNewCoroutineLoop(action, Time.deltaTime, loopTime);
+        }
+        /// <summary>
+        /// Create Coroutine loop with loopTime
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="pausePerLoop"> Time pause per loop </param>
+        public static void CreateNewCoroutineLoop(Action action, float pausePerLoop)
+        {
+            CreateNewCoroutineLoop(action, pausePerLoop, -1);
+        }
+        /// <summary>
+        /// Create Coroutine loop with 1 frame pause and infinity loop
+        /// </summary>
+        /// <param name="action"></param>
+        public static void CreateNewCoroutineLoop(Action action)
+        {
+            CreateNewCoroutineLoop(action, Time.deltaTime);
+        }
+        /// <summary>
+        /// Create Coroutine loop with pausePerLoop and loopTime 
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="pausePerLoop"> time pause per loop </param>
+        /// <param name="loopTime"> how many loop time</param>
+        public static void CreateNewCoroutineLoop(Action action, float pausePerLoop, int loopTime)
+        {
+            CoroutineScript coroutineScript = CreateNewCoroutineObj();
+            coroutineScript.StartCoroutineLoop(() =>
+            {
+                action?.Invoke();
+                return false;
+            }, pausePerLoop, loopTime);
+        }
+        /// <summary>
+        /// Create coroutine loop with Func<bool> will stop if Func<bool> return true
+        /// </summary>
+        /// <param name="func"> function to perform </param>
+        public static void CreateNewCoroutineLoop(Func<bool> func)
+        {
+            CoroutineScript coroutineScript = CreateNewCoroutineObj();
+            coroutineScript.StartCoroutineLoop(func, Time.deltaTime, -1);
         }
         #endregion
 
@@ -641,6 +697,41 @@ namespace NOOD
             delegateObject.PurgeDelegatesOf(functionObject);
         }
         #endregion
+
+        #region Update Functions
+        public static void StartUpdater(Action action)
+        {
+            UpdateObject.Create(() => {action?.Invoke(); return false;}, "", false);
+        }
+        public static void StartUpdater(Action action, string functionName)
+        {
+            UpdateObject.Create(() => {action?.Invoke(); return false;}, functionName, false);
+        }
+        public static void StartUpdater(Action action, string functionName, bool stopAllWithTheSameName)
+        {
+            UpdateObject.Create(() => {action?.Invoke(); return false;}, functionName, stopAllWithTheSameName);
+        }
+        public static void StartUpdater(Func<bool> func)
+        {
+            UpdateObject.Create(func, "", false);
+        }
+        public static void StartUpdater(Func<bool> func, string functionName)
+        {
+            UpdateObject.Create(func, functionName, false);
+        }
+        public static void StartUpdater(Func<bool> func, string functionName, bool stopAllWithTheSameName)
+        {
+            UpdateObject.Create(func, functionName, stopAllWithTheSameName);
+        }
+        public static void StopUpdaterWithName(string functionName)
+        {
+            UpdateObject.StopWithName(functionName);
+        }
+        public static void StopAllUpdaterWithName(string functionName)
+        {
+            UpdateObject.StopAllWithName(functionName);
+        }
+        #endregion 
     }
 
 }
