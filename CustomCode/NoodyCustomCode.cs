@@ -696,6 +696,17 @@ namespace NOOD
         {
             delegateObject.PurgeDelegatesOf(functionObject);
         }
+        /// <summary>
+        /// UnSubscribe all function belong to currentObject from instance of <T> object
+        /// </summary>
+        /// <typeparam name="T"> The type of instance object </typeparam>
+        /// <param name="currentObject"></param>
+        public static void UnSubscribeAllEvent<T>(object currentObject) where T : MonoBehaviour
+        {
+            // Get Instance in scene
+            UnityEngine.Object instance = GameObject.FindObjectOfType<T>();
+            UnSubscribeAllEvent(instance, currentObject);
+        }
         #endregion
 
         #region Update Functions
