@@ -55,6 +55,10 @@ namespace NOOD.Extension
         const string extension = ".cs";
         public static void WriteToEnum<T>(string enumFolderPath, string enumFileName, ICollection<string> data)
         {
+            if(Directory.Exists(enumFolderPath) == false)
+            {
+                Directory.CreateDirectory(enumFolderPath);
+            }
             using (StreamWriter file = File.CreateText(enumFolderPath + enumFileName + extension))
             {
                 file.WriteLine("public enum " + typeof(T).Name + "\n{ ");
@@ -73,6 +77,8 @@ namespace NOOD.Extension
 
                 file.WriteLine("}");
                 AssetDatabase.ImportAsset(enumFolderPath + enumFileName + extension);
+                Debug.Log("Create Success " + typeof(T) + " at " + enumFolderPath);
+                Debug.Log(Directory.Exists(enumFolderPath));
             }
         }
     }

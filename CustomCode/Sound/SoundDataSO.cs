@@ -17,8 +17,7 @@ public class SoundDataSO : ScriptableObject
 #if UNITY_EDITOR
     public void GenerateSoundEnum()
     {
-        string filePath = RootPathExtension<SoundManager>.RootPath;
-        string folderPath = filePath.Replace("CustomEditor/SoundManagerEditor.cs", "Extension/");
+        string folderPath = Application.dataPath + "/_Scripts/Noody/Extension/";
         EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList());
         EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList());
         AssetDatabase.Refresh();
