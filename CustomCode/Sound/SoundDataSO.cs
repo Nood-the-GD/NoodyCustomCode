@@ -1,12 +1,11 @@
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using NOOD.SerializableDictionary;
 using NOOD.Extension;
-using NOOD.NoodCustomEditor;
 using UnityEditor;
 using NOOD.Sound;
+using System.IO;
+using System;
 
 [CreateAssetMenu(fileName = "SoundData", menuName = "SoundData")]
 public class SoundDataSO : ScriptableObject
@@ -20,7 +19,16 @@ public class SoundDataSO : ScriptableObject
         string folderPath = Application.dataPath + "/_Scripts/Noody/Extension/";
         EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList());
         EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList());
+        GenerateSoundEnumNood();
         AssetDatabase.Refresh();
+    }
+    private void GenerateSoundEnumNood()
+    {
+        string rootPath = RootPathExtension<SoundManager>.RootPath;
+        Debug.Log(rootPath);
+        string folderPath = rootPath.Replace("CustomEditor/SoundManagerEditor.cs", "Extension/");
+        EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList(), "NOOD.Sound");
+        EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList(), "NOOD.Sound");
     }
 #endif
 }

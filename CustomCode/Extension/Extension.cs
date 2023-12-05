@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.DemiEditor;
 
 namespace NOOD.Extension
 {
@@ -55,12 +56,20 @@ namespace NOOD.Extension
         const string extension = ".cs";
         public static void WriteToEnum<T>(string enumFolderPath, string enumFileName, ICollection<string> data)
         {
+            WriteToEnum<T>(enumFolderPath, enumFileName, data, null);
+        }
+        public static void WriteToEnum<T>(string enumFolderPath, string enumFileName, ICollection<string> data, string _namespace = null)
+        {
             if(Directory.Exists(enumFolderPath) == false)
             {
                 Directory.CreateDirectory(enumFolderPath);
             }
             using (StreamWriter file = File.CreateText(enumFolderPath + enumFileName + extension))
             {
+                if(_namespace.IsNullOrEmpty() == false)
+                {
+                    file.WriteLine("namespace " + _namespace + "\n{ ");
+                }
                 file.WriteLine("public enum " + typeof(T).Name + "\n{ ");
 
                 int i = 0;
@@ -79,6 +88,10 @@ namespace NOOD.Extension
                 AssetDatabase.ImportAsset(enumFolderPath + enumFileName + extension);
                 Debug.Log("Create Success " + typeof(T) + " at " + enumFolderPath);
                 Debug.Log(Directory.Exists(enumFolderPath));
+                if(_namespace.IsNullOrEmpty() == false)
+                {
+                    file.WriteLine("}");
+                }
             }
         }
     }

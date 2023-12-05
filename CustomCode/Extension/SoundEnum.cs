@@ -1,4 +1,6 @@
+namespace NOOD.Sound
+{ 
 public enum SoundEnum
 { 
-	First = 0,
+}
 }

@@ -1,19 +1,12 @@
-using System.Linq;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-using NOOD.SerializableDictionary;
-using NOOD.Extension;
-using NOOD.NoodCustomEditor;
-using UnityEditor;
 
 namespace NOOD.Sound
 {
-    public class SoundManager : MonoBehaviorInstance<SoundManager>
+    public class SoundManager
     {
         private static SoundDataSO soundData;
 
-        void FindSoundData()
+        public static void FindSoundData()
         {
             soundData = Resources.FindObjectsOfTypeAll<SoundDataSO>()[0];
             if(soundData == null)
@@ -25,7 +18,7 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
 
             GameObject newObj = new GameObject("SoundPlayer" + soundEnum.ToString());
@@ -34,33 +27,33 @@ namespace NOOD.Sound
             AudioClip audioClip = soundAudioPayer.clip = soundData.soundDic.Dictionary[soundEnum.ToString()];
             soundAudioPayer.clip = audioClip;
             soundAudioPayer.Play();
-            Destroy(soundAudioPayer.gameObject, audioClip.length);
+            UnityEngine.Object.Destroy(soundAudioPayer.gameObject, audioClip.length);
         }
         public static void StopSound(SoundEnum soundEnum)
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             GameObject soundPlayerObj = GameObject.Find("SoundPlayer" + soundEnum.ToString());
-            Destroy(soundPlayerObj);
+            UnityEngine.Object.Destroy(soundPlayerObj);
         }
         public static void StopAllSound()
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             foreach(var soundPlayer in GameObject.FindObjectsOfType<SoundPlayer>())
             {
-                Destroy(soundPlayer);
+                UnityEngine.Object.Destroy(soundPlayer);
             }
         }
         public static float GetSoundLength(SoundEnum soundEnum)
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             return soundData.soundDic.Dictionary[soundEnum.ToString()].length;
         }
@@ -75,14 +68,19 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
-            AudioSource musicPlayer = GameObject.FindObjectOfType<MusicPlayer>().GetComponent<AudioSource>();
-            if(musicPlayer == null)
+            AudioSource musicPlayer;
+            MusicPlayer musicPlayerObject = GameObject.FindObjectOfType<MusicPlayer>();
+            if(musicPlayerObject == null)
             {
                 GameObject newObj = new GameObject("MusicPlayer" + musicEnum.ToString());
                 newObj.AddComponent<MusicPlayer>();
                 musicPlayer = newObj.AddComponent<AudioSource>();
+            }
+            else
+            {
+                musicPlayer = musicPlayerObject.GetComponent<AudioSource>();
             }
             AudioClip audioClip = musicPlayer.clip = soundData.musicDic.Dictionary[musicEnum.ToString()];
             musicPlayer.clip = audioClip;
@@ -97,7 +95,7 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             GameObject newObj = new GameObject("MusicPlayer" + musicEnum.ToString());
             newObj.AddComponent<MusicPlayer>();
@@ -111,7 +109,7 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             AudioSource musicPlayer = GameObject.FindObjectOfType<MusicPlayer>().GetComponent<AudioSource>();
             musicPlayer.gameObject.name = "MusicPlayer" + musicEnum.ToString();
@@ -122,7 +120,7 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             AudioSource musicPlayer = GameObject.FindObjectOfType<MusicPlayer>().GetComponent<AudioSource>();
             musicPlayer.Stop();
@@ -131,7 +129,7 @@ namespace NOOD.Sound
         {
             if(soundData == null)
             {
-                Instance.FindSoundData();
+                FindSoundData();
             }
             return soundData.musicDic.Dictionary[musicEnum.ToString()].length;
         }
