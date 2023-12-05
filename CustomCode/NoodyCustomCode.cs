@@ -685,7 +685,8 @@ namespace NOOD
         /// <param name="currentObject"></param>
         public static void UnSubscribeFromStatic(Type staticType, object currentObject)
         {
-            staticType.PurgeDelegatesOf(currentObject);
+            if(currentObject != null)
+                staticType.PurgeDelegatesOf(currentObject);
         }
         /// <summary>
         /// UnSubscribe all function belong to functionObject from delegateObject
@@ -694,7 +695,8 @@ namespace NOOD
         /// <param name="functionObject"> object that hold functions </param>
         public static void UnSubscribeAllEvent(object delegateObject, object functionObject)
         {
-            delegateObject.PurgeDelegatesOf(functionObject);
+            if(delegateObject != null && functionObject != null)
+                delegateObject.PurgeDelegatesOf(functionObject);
         }
         /// <summary>
         /// UnSubscribe all function belong to currentObject from instance of <T> object
@@ -743,6 +745,30 @@ namespace NOOD
             UpdateObject.StopAllWithName(functionName);
         }
         #endregion 
+
+        #region Transform and Collider 
+        public static Vector3 GetRandomPointInsideCollider(Collider collider)
+        {
+            Vector3 minPosition = collider.bounds.min;
+            Vector3 maxPosition = collider.bounds.max;
+
+            float randX = UnityEngine.Random.Range(minPosition.x, maxPosition.x);
+            float randY = UnityEngine.Random.Range(minPosition.y, maxPosition.y);
+            float randZ = UnityEngine.Random.Range(minPosition.z, maxPosition.z);
+
+            return new Vector3(randX, randY, randZ);
+        }
+        public static Vector2 GetRandomPointInsideCollider2D(Collider2D collider)
+        {
+            Vector2 minPosition = collider.bounds.min;
+            Vector2 maxPosition = collider.bounds.max;
+
+            float randX = UnityEngine.Random.Range(minPosition.x, maxPosition.x);
+            float randY = UnityEngine.Random.Range(minPosition.y, maxPosition.y);
+
+            return new Vector2(randX, randY);
+        }
+        #endregion
     }
 
 }
