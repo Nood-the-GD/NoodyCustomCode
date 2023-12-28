@@ -94,7 +94,10 @@ namespace NOOD
         //Returns 'true' if we touched or hovering on Unity UI element.
         public static bool IsPointerOverUIElement()
         {
-            return GetCurrentPointObject().layer == 5; // 5 is index of Layer UI
+            GameObject gameObject = GetCurrentPointObject();
+            if (gameObject == null) return false;
+
+            return gameObject.layer == 5; // 5 is index of Layer UI
         }
         public static GameObject GetCurrentPointObject()
         {
@@ -170,16 +173,29 @@ namespace NOOD
         #endregion
 
         #region Delay Function
+        /// <summary>
+        /// Start one time CR function and return DelayAction object
+        /// </summary>
+        /// <param name="action"></param>
+        /// <param name="delaySecond"></param>
+        /// <returns></returns>
         public static DelayAction StartDelayFunction(Action action, float delaySecond)
         {
-            GameObject delayObj = new GameObject("DelayActionGameObject");
-            DelayAction delay = delayObj.AddComponent<DelayAction>();
+            return StartDelayFunction(action, "", delaySecond);
+        }
+        public static DelayAction StartDelayFunction(Action action, string functionName, float delaySecond)
+        {
+            DelayAction delay = DelayAction.Create();
 
             delay.StartDelayFunction(() =>
             {
                 action?.Invoke();
-            }, delaySecond);
+            }, functionName, delaySecond);
             return delay;
+        }
+        public static void StopDelayFunction(string functionName)
+        {
+            DelayAction.StopDelayFunction(functionName);
         }
         #endregion
 
@@ -483,7 +499,7 @@ namespace NOOD
                     return true;
                 }
                 return false;
-            }, pauseTimePerLoop, -1);
+            }, "",pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -526,7 +542,7 @@ namespace NOOD
                     return true;
                 }
                 return false;
-            }, pauseTimePerLoop, -1);
+            },"", pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -568,7 +584,7 @@ namespace NOOD
                     return true;
                 }
                 return false;
-            }, pauseTimePerLoop, -1);
+            }, "", pauseTimePerLoop, -1);
         }
         //----------------------------//
         /// <summary>
@@ -610,7 +626,7 @@ namespace NOOD
                     return true;
                 }
                 return false;
-            }, pauseTimePerLoop, -1);
+            },"", pauseTimePerLoop, -1);
         }
         #endregion
     
@@ -621,35 +637,33 @@ namespace NOOD
         /// <returns></returns>
         public static CoroutineScript CreateNewCoroutineObj()
         {
-            GameObject fadeInObj = new GameObject("CoroutineObj");
-            CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
-            return coroutineScript;
+            return CoroutineScript.Create();
         }
         /// <summary>
         /// Create Coroutine loop with loopTime
         /// </summary>
         /// <param name="action"></param>
         /// <param name="loopTime"> How many times function will loop </param>
-        public static void CreateNewCoroutineLoop(Action action, int loopTime)
+        public static void StartNewCoroutineLoop(Action action, int loopTime)
         {
-            CreateNewCoroutineLoop(action, Time.deltaTime, loopTime);
+            StartNewCoroutineLoop(action, "", Time.deltaTime, loopTime);
         }
         /// <summary>
         /// Create Coroutine loop with loopTime
         /// </summary>
         /// <param name="action"></param>
         /// <param name="pausePerLoop"> Time pause per loop </param>
-        public static void CreateNewCoroutineLoop(Action action, float pausePerLoop)
+        public static void StartNewCoroutineLoop(Action action, float pausePerLoop)
         {
-            CreateNewCoroutineLoop(action, pausePerLoop, -1);
+            StartNewCoroutineLoop(action, "", pausePerLoop, -1);
         }
         /// <summary>
         /// Create Coroutine loop with 1 frame pause and infinity loop
         /// </summary>
         /// <param name="action"></param>
-        public static void CreateNewCoroutineLoop(Action action)
+        public static void StartNewCoroutineLoop(Action action)
         {
-            CreateNewCoroutineLoop(action, Time.deltaTime);
+            StartNewCoroutineLoop(action, Time.deltaTime);
         }
         /// <summary>
         /// Create Coroutine loop with pausePerLoop and loopTime 
@@ -657,23 +671,27 @@ namespace NOOD
         /// <param name="action"></param>
         /// <param name="pausePerLoop"> time pause per loop </param>
         /// <param name="loopTime"> how many loop time</param>
-        public static void CreateNewCoroutineLoop(Action action, float pausePerLoop, int loopTime)
+        public static void StartNewCoroutineLoop(Action action, string functionName, float pausePerLoop, int loopTime)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
             coroutineScript.StartCoroutineLoop(() =>
             {
                 action?.Invoke();
                 return false;
-            }, pausePerLoop, loopTime);
+            }, functionName, pausePerLoop, loopTime);
         }
         /// <summary>
-        /// Create coroutine loop with Func<bool> will stop if Func<bool> return true
+        /// Create coroutine loop with Func(bool) will stop if Func(bool) return true
         /// </summary>
         /// <param name="func"> function to perform </param>
-        public static void CreateNewCoroutineLoop(Func<bool> func)
+        public static void StartNewCoroutineLoop(Func<bool> func, string functionName)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
-            coroutineScript.StartCoroutineLoop(func, Time.deltaTime, -1);
+            coroutineScript.StartCoroutineLoop(func, functionName, Time.deltaTime, -1);
+        }
+        public static void StopCoroutineLoop(string functionName)
+        {
+            CoroutineScript.StopCoroutineLoop(functionName);
         }
         #endregion
 
@@ -699,7 +717,7 @@ namespace NOOD
                 delegateObject.PurgeDelegatesOf(functionObject);
         }
         /// <summary>
-        /// UnSubscribe all function belong to currentObject from instance of <T> object
+        /// UnSubscribe all function belong to currentObject from instance of object
         /// </summary>
         /// <typeparam name="T"> The type of instance object </typeparam>
         /// <param name="currentObject"></param>

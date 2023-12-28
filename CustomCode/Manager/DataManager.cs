@@ -21,7 +21,6 @@ namespace NOOD.Data
             {
                 if (data == null)
                 {
-                    Debug.Log(typeof(T).Name);
                     QuickLoad();
                 }
                 return data;
@@ -30,12 +29,14 @@ namespace NOOD.Data
 
         #region LoadData
         /// <summary>
-        /// 
+        /// Use property Data to retreat data 
         /// </summary> 
         private static void QuickLoad()
         {
+            Debug.Log("QuickLoad");
             if (PlayerPrefs.HasKey(typeof(T).Name))
             {
+                Debug.Log("QuickLoad Has Key");
                 data = LoadDataFromPlayerPref(typeof(T).Name);
             }
 
@@ -132,10 +133,14 @@ namespace NOOD.Data
         }
         #endregion
 
-        // Return the data to default value
-        public static void Clear()
+        /// <summary>
+        /// Only work if data is saved with QuickSave()  
+        /// </summary>
+        public static void QuickClear()
         {
+            QuickLoad();
             data = default;
+            QuickSave();
         }
     }
 }
