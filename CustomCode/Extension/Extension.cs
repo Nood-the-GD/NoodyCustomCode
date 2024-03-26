@@ -52,6 +52,55 @@ namespace NOOD.Extension
         }
     }
 
+    public static class Vector3Extension
+    {
+        public static Vector2 ToVector2XY (this Vector3 source)
+        {
+            return new Vector2(source.x, source.y);
+        }
+        public static Vector2 ToVector2XZ (this Vector3 source)
+        {
+            return new Vector2(source.x, source.z);
+        }
+        public static Vector2 ToVector2YZ (this Vector3 source)
+        {
+            return new Vector2(source.y, source.z);
+        }
+        public static Vector3 ToVector3XZ (this Vector3 source)
+        {
+            return new Vector3(source.x, 0, source.z);
+        }
+        public static Vector3 ChangeX(this Vector3 source, float value)
+        {
+            return new Vector3(value, source.y, source.z);
+        }
+        public static Vector3 ChangeY(this Vector3 source, float value)
+        {
+            return new Vector3(source.x, value, source.z);
+        }
+        public static Vector3 ChangeZ(this Vector3 source, float value)
+        {
+            return new Vector3(source.x, source.y, value);
+        }
+    }
+
+    public static class Vector2Extension
+    {
+        public static Vector3 ToVector3XZ (this Vector2 source, float y = 0)
+        {
+            return new Vector3(source.x, y, source.y);
+        }
+        public static Vector3 ToVector3XY (this Vector2 source, float z = 0)
+        {
+            return new Vector3(source.x, source.y, z);
+        }
+        public static Vector3 ToVector3YZ (this Vector2 source, float x = 0)
+        {
+            return new Vector3(x, source.x, source.y);
+        }
+    }
+
+#region Editor Extension
 #if UNITY_EDITOR
     public static class EnumCreator
     {
@@ -112,7 +161,9 @@ namespace NOOD.Extension
         }
     }
 #endif
+#endregion
 
+    #region File Extension
     public static class FileExtension
     {
         public static FileStream CreateFile(string folderPath, string fileName, string extension)
@@ -151,19 +202,21 @@ namespace NOOD.Extension
             return true;
         }
     }
+    #endregion
+    
     public static class InputActionExtension
     {
-        public static void SaveKeyBinding(this InputAction inputAction)
-        {
-            PlayerPrefs.SetString(inputAction.name, inputAction.SaveBindingOverridesAsJson());
-            PlayerPrefs.Save();
-        }
-        public static void LoadKeyBinding(this InputAction inputAction)
-        {
-            if(PlayerPrefs.HasKey(inputAction.name))
-            {
-                inputAction.LoadBindingOverridesFromJson(PlayerPrefs.GetString(inputAction.name));
-            }
-        }
+        // public static void SaveKeyBinding(this InputAction inputAction)
+        // {
+        //     PlayerPrefs.SetString(inputAction.name, inputAction.SaveBindingOverridesAsJson());
+        //     PlayerPrefs.Save();
+        // }
+        // public static void LoadKeyBinding(this InputAction inputAction)
+        // {
+        //     if(PlayerPrefs.HasKey(inputAction.name))
+        //     {
+        //         inputAction.LoadBindingOverridesFromJson(PlayerPrefs.GetString(inputAction.name));
+        //     }
+        // }
     }
 }
