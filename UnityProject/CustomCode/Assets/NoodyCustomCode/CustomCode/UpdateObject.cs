@@ -6,6 +6,7 @@ using UnityEngine;
 public class UpdateObject : MonoBehaviour
 {
     public static List<UpdateObject> updateObjects;
+    public object obj;
     public Func<bool> _func;
     public string _functionName;
     private bool _isPause;
@@ -15,7 +16,7 @@ public class UpdateObject : MonoBehaviour
     {
         return new GameObject("UpdateObject " + objectName).AddComponent<UpdateObject>();
     }
-    public static void Create(Func<bool> func, string functionName, bool stopAllWithTheSameName)
+    public static void Create(object target, Func<bool> func, string functionName, bool stopAllWithTheSameName)
     {
         InitIfNeed();
 
@@ -43,6 +44,12 @@ public class UpdateObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (obj == null) 
+        { 
+            DestroySelf(); 
+            return; 
+        }
+        
         if(_isPause == true) return;
         if(_func != null)
         {

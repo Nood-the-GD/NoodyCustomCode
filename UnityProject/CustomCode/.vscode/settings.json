@@ -56,5 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "CustomCode.sln"
+    "dotnet.defaultSolution": "CustomCode.sln",
+    "window.autoDetectColorScheme": true
 }

@@ -7,8 +7,6 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
-using System.Linq;
-using System.Resources;
 
 namespace NOOD
 {
@@ -730,29 +728,29 @@ namespace NOOD
         #endregion
 
         #region Update Functions
-        public static void StartUpdater(Action action)
+        public static void StartUpdater(object target, Action action)
         {
-            UpdateObject.Create(() => {action?.Invoke(); return false;}, "", false);
+            UpdateObject.Create(target, () => {action?.Invoke(); return false;}, "", false);
         }
-        public static void StartUpdater(Action action, string functionName)
+        public static void StartUpdater(object target, Action action, string functionName)
         {
-            UpdateObject.Create(() => {action?.Invoke(); return false;}, functionName, false);
+            UpdateObject.Create(target, () => {action?.Invoke(); return false;}, functionName, false);
         }
-        public static void StartUpdater(Action action, string functionName, bool stopAllWithTheSameName)
+        public static void StartUpdater(object target, Action action, string functionName, bool stopAllWithTheSameName)
         {
-            UpdateObject.Create(() => {action?.Invoke(); return false;}, functionName, stopAllWithTheSameName);
+            UpdateObject.Create(target, () => {action?.Invoke(); return false;}, functionName, stopAllWithTheSameName);
         }
-        public static void StartUpdater(Func<bool> func)
+        public static void StartUpdater(object target, Func<bool> func)
         {
-            UpdateObject.Create(func, "", false);
+            UpdateObject.Create(target, func, "", false);
         }
-        public static void StartUpdater(Func<bool> func, string functionName)
+        public static void StartUpdater(object target, Func<bool> func, string functionName)
         {
-            UpdateObject.Create(func, functionName, false);
+            UpdateObject.Create(target, func, functionName, false);
         }
-        public static void StartUpdater(Func<bool> func, string functionName, bool stopAllWithTheSameName)
+        public static void StartUpdater(object target, Func<bool> func, string functionName, bool stopAllWithTheSameName)
         {
-            UpdateObject.Create(func, functionName, stopAllWithTheSameName);
+            UpdateObject.Create(target, func, functionName, stopAllWithTheSameName);
         }
         public static void StopUpdaterWithName(string functionName)
         {
