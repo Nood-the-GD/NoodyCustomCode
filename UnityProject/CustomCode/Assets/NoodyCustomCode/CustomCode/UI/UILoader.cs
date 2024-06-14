@@ -12,7 +12,6 @@ namespace NOOD.UI
     public class UILoader 
     {
         private static Transform _parentUITransform = null;
-        private static Dictionary<Type, object> _noodUIDic = new();
         private static Dictionary<string, string> _uiPathDic = new();
 
 #region UISetup
@@ -28,7 +27,7 @@ namespace NOOD.UI
         {
             path = path.Replace("Resources/", "");
             path = path.Replace(".prefab", "");
-            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
+            if(FileExtension.IsExitFileInDatasFolder("UIDictionary"))
             {
                 _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
@@ -47,39 +46,37 @@ namespace NOOD.UI
 #endregion
 
 #region LoadUI
-        public static T LoadUI<T>() where T : NoodUI
+        public static T LoadUI<T>(Transform parent = null) where T : NoodUI
         {
-            if(FileExtension.IsExitFileInDefaultFolder("UIDictionary"))
+            if(FileExtension.IsExitFileInDatasFolder("UIDictionary"))
             {
                 _uiPathDic = DataManager<Dictionary<string, string>>.LoadDataFromDefaultFolder("UIDictionary");
             }
 
-            if(_noodUIDic.ContainsKey(typeof(T)))
+
+            if(TryGetUI<T>(out T ui))
             {
                 // Get UI gamObject in the scene
-                T ui = GetUI<T>();
-                ui.gameObject.SetActive(true);
-                ui.Open();
-                return ui;
+                if (ui == null || ui.gameObject == null)
+                {
+                    Transform parentTrans = parent == null ? _parentUITransform : parent;
+                    ui = NoodUI.Create<T>(parentTrans);
+                    ui.Open();
+                    return ui;
+                }
+                else
+                {
+                    ui.gameObject.SetActive(true);
+                    ui.Open();
+                    return ui;
+                }
             }
             else
             {
                 Debug.Log(_uiPathDic.Count);
-                T ui = NoodUI.Create<T>(_uiPathDic[typeof(T).FullName], _parentUITransform);
+                ui = NoodUI.Create<T>(_parentUITransform);
                 ui.Open();
-                AddUI(ui);
                 return ui;
-            }
-        }
-        private static void AddUI(NoodUI ui)
-        {
-            if (!_noodUIDic.ContainsKey(ui.GetType()))
-            {
-                _noodUIDic.Add(ui.GetType(), ui);
-            }
-            else
-            {
-                _noodUIDic[ui.GetType()] = ui;
             }
         }
 #endregion
@@ -87,17 +84,30 @@ namespace NOOD.UI
 #region CloseUI
         public static void CloseUI<T>() where T : NoodUI
         {
-            T ui = GetUI<T>();
-            ui?.Close();
+            if(TryGetUI<T>(out T ui))
+                ui?.Close();
         }
 #endregion
 
 #region GetUI
+        public static bool TryGetUI<T>(out T ui) where T : NoodUI
+        {
+            T result = GameObject.FindObjectOfType<T>(true);
+            if(result != null)
+            {
+                ui = result;
+                return true;
+            }
+            Debug.Log("Can't find " + typeof(T));
+            ui = null;
+            return false;
+        }
         public static T GetUI<T>() where T : NoodUI
         {
-            if(_noodUIDic.ContainsKey(typeof(T)))
+            T result = GameObject.FindObjectOfType<T>(true);
+            if(result != null)
             {
-                return (T) _noodUIDic[typeof(T)];
+                return result;
             }
             Debug.Log("Can't find " + typeof(T));
             return null;

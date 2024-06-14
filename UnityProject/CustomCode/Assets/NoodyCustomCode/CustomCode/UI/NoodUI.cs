@@ -7,14 +7,15 @@ namespace NOOD.UI
 {
     public class NoodUI : MonoBehaviour
     {
-        public static T Create<T>(string path, Transform parent = null) where T : NoodUI
+        public static T Create<T>(Transform parent = null) where T : NoodUI
         {
-            T prefab = Resources.Load<T>(path);
-            T temp = Instantiate(prefab, parent);
-            if(temp == null)
+            T prefab = Resources.LoadAll<T>("")[0];
+            if(prefab == null)
             {
                 Debug.LogError("Can't find prefab with type " + typeof(T).Name);
+                return null;
             }
+            T temp = Instantiate(prefab, parent);
             return temp;
         }
         

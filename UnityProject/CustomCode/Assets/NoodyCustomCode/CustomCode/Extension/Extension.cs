@@ -10,7 +10,7 @@ namespace NOOD.Extension
     {
         public static T AddToEnum<T>(this T sourceEnum, string value, T defaultValue) where T : struct
         {
-            if(string.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 return defaultValue;
             }
@@ -39,10 +39,20 @@ namespace NOOD.Extension
         public static T GetRandom<T>(this List<T> list) where T : class
         {
             T result = null;
-            if(list.Count > 0 && list != null)
+            if (list.Count > 0 && list != null)
             {
                 int r = UnityEngine.Random.Range(0, list.Count - 1);
                 result = list[r];
+            }
+            return result;
+        }
+        public static T GetRandom<T>(this T[] array) where T : class
+        {
+            T result = null;
+            if (array.Length > 0 && array != null)
+            {
+                int r = UnityEngine.Random.Range(0, array.Length);
+                result = array[r];
             }
             return result;
         }
@@ -58,14 +68,14 @@ namespace NOOD.Extension
         }
         public static void WriteToEnum<T>(string enumFolderPath, string enumFileName, ICollection<string> data, string _namespace = null)
         {
-            if(Directory.Exists(enumFolderPath) == false)
+            if (Directory.Exists(enumFolderPath) == false)
             {
                 Directory.CreateDirectory(enumFolderPath);
             }
             string filePath = Path.Combine(enumFolderPath, enumFileName + extension);
             using (StreamWriter file = File.CreateText(filePath))
             {
-                if(string.IsNullOrEmpty(_namespace) == false)
+                if (string.IsNullOrEmpty(_namespace) == false)
                 {
                     file.WriteLine("namespace " + _namespace + "\n{ ");
                 }
@@ -86,21 +96,19 @@ namespace NOOD.Extension
                 file.WriteLine("}");
                 AssetDatabase.ImportAsset(filePath);
                 Debug.Log("Create Success " + typeof(T) + " at " + filePath);
-                if(string.IsNullOrEmpty(_namespace) == false)
+                Debug.Log(Directory.Exists(enumFolderPath));
+                if (string.IsNullOrEmpty(_namespace) == false)
                 {
                     file.WriteLine("}");
                 }
             }
         }
     }
-#endif
-
-#if UNITY_EDITOR
-    public static class RootPathExtension<T> 
+    public static class RootPathExtension<T>
     {
         public static string RootPath
         {
-            get 
+            get
             {
                 var g = AssetDatabase.FindAssets($"t:Script {typeof(T).Name}");
                 return AssetDatabase.GUIDToAssetPath(g[0]);
@@ -113,44 +121,75 @@ namespace NOOD.Extension
             }
         }
     }
-#endif
-
-    public static class FileExtension
+    public static class AssetDatabaseExtension
     {
-        public static FileStream CreateFile(string folderPath, string fileName, string extension)
+        public static T Load<T>(string path) where T : UnityEngine.Object
         {
-            string filePath = Path.Combine(folderPath, fileName + extension);
-            return File.Create(filePath);
+            return AssetDatabase.LoadAssetAtPath<T>(path);
         }
-        public static void WriteToFile(string filePath, string text)
+        public static List<T> LoadAllAssetOfType<T>() where T : UnityEngine.Object
         {
-            CreateFolderIfNeed(Path.GetDirectoryName(filePath));
-
-            using(StreamWriter file = File.CreateText(filePath))
+            List<T> result = new List<T>();
+            string[] assetNames = AssetDatabase.FindAssets($"t:{typeof(T).Name}");
+            foreach (string name in assetNames)
             {
-                file.Write(text);
+                var assetPath = AssetDatabase.GUIDToAssetPath(name);
+                var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                result.Add(asset);
             }
+            return result;
         }
-        public static string ReadFile(string filePath, string extension)
+        public static List<T> LoadAllAssetOfType<T>(string pacificType) where T : UnityEngine.Object
         {
-            return File.ReadAllText(filePath + extension);
-        }
-        public static void CreateFolderIfNeed(string directory)
-        {
-            if(!Directory.Exists(directory))
+            List<T> result = new List<T>();
+            string[] assetNames = AssetDatabase.FindAssets($"t:{pacificType}");
+            foreach (string name in assetNames)
             {
-                Directory.CreateDirectory(directory);
+                var assetPath = AssetDatabase.GUIDToAssetPath(name);
+                var asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+                result.Add(asset);
             }
-        }
-        public static bool IsExistFile(string filePath)
-        {
-            return File.Exists(filePath);
-        }
-        public static bool IsExitFileInDefaultFolder(string fileName)
-        {
-            UnityEngine.Object resources = Resources.Load(Path.Combine("Datas", fileName));
-            if (resources == null) return false;
-            return true;
+            return result;
         }
     }
+#endif
+
+        public static class FileExtension
+        {
+            public static FileStream CreateFile(string folderPath, string fileName, string extension)
+            {
+                string filePath = Path.Combine(folderPath, fileName + extension);
+                return File.Create(filePath);
+            }
+            public static void WriteToFile(string filePath, string text)
+            {
+                CreateFolderIfNeed(Path.GetDirectoryName(filePath));
+
+                using (StreamWriter file = File.CreateText(filePath))
+                {
+                    file.Write(text);
+                }
+            }
+            public static string ReadFile(string filePath, string extension)
+            {
+                return File.ReadAllText(filePath + extension);
+            }
+            public static void CreateFolderIfNeed(string directory)
+            {
+                if (!Directory.Exists(directory))
+                {
+                    Directory.CreateDirectory(directory);
+                }
+            }
+            public static bool IsExistFile(string filePath)
+            {
+                return File.Exists(filePath);
+            }
+            public static bool IsExitFileInDatasFolder(string fileName)
+            {
+                UnityEngine.Object resources = Resources.Load(Path.Combine("Datas", fileName));
+                if (resources == null) return false;
+                return true;
+            }
+        }
 }
