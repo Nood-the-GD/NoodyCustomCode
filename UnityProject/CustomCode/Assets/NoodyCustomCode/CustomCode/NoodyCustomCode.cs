@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
+using Cysharp.Threading.Tasks;
 
 namespace NOOD
 {
@@ -393,7 +394,7 @@ namespace NOOD
             camera.transform.position = temp;
         }
 
-        public static IEnumerator ObjectShake(GameObject @object, float duration, float magnitude)
+        public static void ObjectShake(GameObject @object, float duration, float magnitude)
         {
             Vector3 OriginalPos = @object.transform.localPosition;
             float elapsed = 0.0f;
@@ -418,7 +419,7 @@ namespace NOOD
                 @object.transform.localPosition = new Vector3(x, y, OriginalPos.z);
 
                 elapsed += Time.deltaTime;
-                yield return null;
+                UniTask.Yield();
             }
             @object.transform.localPosition = OriginalPos;
         }
@@ -486,7 +487,7 @@ namespace NOOD
             GameObject fadeOutObj = new GameObject("FadeOutObj");
             CoroutineScript coroutineScript = fadeOutObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartCoroutineLoop(() =>
+            coroutineScript.StartDelayLoop(() =>
             {
                 Color color = image.color;
                 color.a -= Time.deltaTime;
@@ -530,7 +531,7 @@ namespace NOOD
             image.gameObject.SetActive(true);
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartCoroutineLoop(() =>
+            coroutineScript.StartDelayLoop(() =>
             {
                 Color color = image.color;
                 color.a += Time.deltaTime;
@@ -571,7 +572,7 @@ namespace NOOD
             GameObject fadeOutObj = new GameObject("FadeOutObj");
             CoroutineScript coroutineScript = fadeOutObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartCoroutineLoop(() =>
+            coroutineScript.StartDelayLoop(() =>
             {
                 Color color = textMeshProUGUI.color;
                 color.a -= Time.deltaTime;
@@ -614,7 +615,7 @@ namespace NOOD
             GameObject fadeInObj = new GameObject("FadeInObj");
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartCoroutineLoop(() =>
+            coroutineScript.StartDelayLoop(() =>
             {
                 Color color = textMeshProUGUI.color;
                 color.a += Time.deltaTime;
@@ -672,7 +673,7 @@ namespace NOOD
         public static void StartNewCoroutineLoop(Action action, string functionName, float pausePerLoop, int loopTime)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
-            coroutineScript.StartCoroutineLoop(() =>
+            coroutineScript.StartDelayLoop(() =>
             {
                 action?.Invoke();
                 return false;
@@ -685,7 +686,7 @@ namespace NOOD
         public static void StartNewCoroutineLoop(Func<bool> func, string functionName)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
-            coroutineScript.StartCoroutineLoop(func, functionName, Time.deltaTime, -1);
+            coroutineScript.StartDelayLoop(func, functionName, Time.deltaTime, -1);
         }
         public static void StopCoroutineLoop(string functionName)
         {

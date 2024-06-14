@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem.EnhancedTouch;
 
@@ -43,34 +44,34 @@ namespace NOOD
         }
         #endregion
 
-        public void StartCoroutineLoop(Func<bool> func, string functionName, float pauseTimePerLoop, int loopTime)
+        public void StartDelayLoop(Func<bool> func, string functionName, float pauseTimePerLoop, int loopTime)
         {
             isComplete = false;
             this.func = func;
             this.pauseTimePerLoop = pauseTimePerLoop;
             this.loopTime = loopTime;
             this.performTime = 0;
-            StartCoroutine(LoopFunctionCR());
+            LoopFunctionDelay();
         }
         public void StopCoroutineSloop()
         {
-            this.StopCoroutine(LoopFunctionCR());
+            isComplete = true;
             Destroy(this.gameObject, 0.2f);
         }
 
         public void Complete()
         {
-            this.StopCoroutine(LoopFunctionCR());
+            isComplete = true; 
             onCompleteLoop?.Invoke();
             _coroutineScripts.Remove(this);
             Destroy(this.gameObject, 0.2f);
         }
         
-        IEnumerator LoopFunctionCR()
+        async void LoopFunctionDelay()
         {
             while( isComplete == false)
             {
-                yield return new WaitForSeconds(pauseTimePerLoop);
+                await UniTask.Delay((int)(pauseTimePerLoop * 1000));
                 performTime++;
                 if(performTime == loopTime || func?.Invoke() == true)
                 {
