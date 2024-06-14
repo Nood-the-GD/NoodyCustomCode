@@ -26,13 +26,13 @@ namespace NOOD.NoodCamera
 
         public void Shake()
         {
-            NOOD.NoodyCustomCode.ObjectShake(this.gameObject, duration, magnitude);
+            StartCoroutine(NOOD.NoodyCustomCode.ObjectShake(this.gameObject, duration, magnitude));
             isShake = false;
         }
 
         public void HeaveShake()
         {
-            NOOD.NoodyCustomCode.ObjectShake(this.gameObject, duration, explodeMagnitude);
+            StartCoroutine(NOOD.NoodyCustomCode.ObjectShake(this.gameObject, duration, explodeMagnitude));
             isHeavyShake = false;
         }
     }

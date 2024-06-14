@@ -24,6 +24,8 @@ namespace NOOD.SerializableDictionary
     {
         [SerializeField] private KeyValuePair<TKey, TValue>[] _pairs;
         private Dictionary<TKey, TValue> _dictionary;
+        public Action<bool> onAdd;
+        public Action<bool> onRemove;
 
         public Dictionary<TKey, TValue> Dictionary
         {
@@ -41,8 +43,16 @@ namespace NOOD.SerializableDictionary
         }
 
         public int Count => Dictionary.Count;
-        public void Add(TKey key, TValue value) => Dictionary.Add(key, value);
-        public bool Remove(TKey key) => Dictionary.Remove(key);
+        public void Add(TKey key, TValue value) 
+        { 
+            onAdd?.Invoke(Dictionary.TryAdd(key, value)); 
+        }
+        public bool Remove(TKey key)
+        {
+            bool result = Dictionary.Remove(key);
+            onRemove?.Invoke(result);
+            return result;
+        }
         public void Clear() => Dictionary.Clear();
         public bool ContainsKey(TKey key) => Dictionary.ContainsKey(key);
         public bool ContainsValue(TValue value) => Dictionary.ContainsValue(value);

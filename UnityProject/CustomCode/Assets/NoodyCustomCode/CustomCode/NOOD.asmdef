@@ -1,12 +1,11 @@
 {
     "name": "NOOD",
-    "rootNamespace": "",
+    "rootNamespace": "NOOD",
     "references": [
         "GUID:2bafac87e7f4b9b418d9448d219b01ab",
-        "GUID:75469ad4d38634e559750d17036d5f7c",
         "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:bdfb6ea6e36d149e1a4c79e892394d75",
-        "GUID:f51ebe6a0ceec4240a699833d6309b23"
+        "GUID:4770cac66e3404483a2d9621a1c054e9",
+        "GUID:2dfd42f51529449769e73195d7f66a4f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

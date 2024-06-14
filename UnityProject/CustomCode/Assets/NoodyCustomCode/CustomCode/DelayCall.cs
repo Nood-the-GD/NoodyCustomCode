@@ -31,26 +31,4 @@ namespace NOOD
             }, "", delaySecond);
         }
     }
-
-    // public class DelayAction : MonoBehaviour
-    // {
-    //     public Action OnComplete;
-    //     Action delayAction;
-    //     float delaySecond;
-
-    //     private IEnumerator Co_Function()
-    //     {
-    //         yield return new WaitForSeconds(delaySecond);
-    //         delayAction?.Invoke();
-    //         OnComplete?.Invoke();
-    //         Destroy(this.gameObject);
-    //     }
-
-    //     public void StartDelayFunction(Action action, float second)
-    //     {
-    //         this.delayAction = action;
-    //         this.delaySecond = second;
-    //         StartCoroutine(Co_Function());
-    //     }
-    // }
 }

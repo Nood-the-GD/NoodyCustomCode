@@ -7,15 +7,21 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using ImpossibleOdds;
-using Cysharp.Threading.Tasks;
+using System.Linq;
+using System.Resources;
+using System.Runtime.CompilerServices;
 
 namespace NOOD
 {
-    public class NoodyCustomCode : MonoBehaviorInstance<NoodyCustomCode>
+    public static class NoodyCustomCode
     {
         public static Thread newThread;
 
         #region Look, mouse and Vector zone
+        // public static bool IsPointerOverUIElement()
+        // {
+
+        // }
         public static Vector3 ScreenPointToWorldPoint(Vector2 screenPoint)
         {
             Camera cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
@@ -96,7 +102,7 @@ namespace NOOD
             GameObject gameObject = GetCurrentPointObject();
             if (gameObject == null) return false;
 
-            return gameObject.layer == 5; // 5 is index of Layer UI
+            return gameObject.layer == LayerMask.NameToLayer("UI"); 
         }
         public static GameObject GetCurrentPointObject()
         {
@@ -210,12 +216,12 @@ namespace NOOD
         {
             Bounds bound = new Bounds(); //Create bound with center Vector3.zero;
 
-            foreach (Collider2D col in FindObjectsOfType<Collider2D>())
+            foreach (Collider2D col in UnityEngine.Object.FindObjectsOfType<Collider2D>())
             {
                 bound.Encapsulate(col.bounds);
             }
 
-            foreach (Collider col in FindObjectsOfType<Collider>())
+            foreach (Collider col in UnityEngine.Object.FindObjectsOfType<Collider>())
             {
                 bound.Encapsulate(col.bounds);
             }
@@ -394,7 +400,7 @@ namespace NOOD
             camera.transform.position = temp;
         }
 
-        public static void ObjectShake(GameObject @object, float duration, float magnitude)
+        public static IEnumerator ObjectShake(GameObject @object, float duration, float magnitude)
         {
             Vector3 OriginalPos = @object.transform.localPosition;
             float elapsed = 0.0f;
@@ -419,7 +425,7 @@ namespace NOOD
                 @object.transform.localPosition = new Vector3(x, y, OriginalPos.z);
 
                 elapsed += Time.deltaTime;
-                UniTask.Yield();
+                yield return null;
             }
             @object.transform.localPosition = OriginalPos;
         }
@@ -458,6 +464,23 @@ namespace NOOD
             return ColorUtility.ToHtmlStringRGB(color);
         }
         //----------------------------//
+        public static void FadeCanvasGroup(this object source, CanvasGroup canvasGroup, float endValue, float speed)
+        {
+            StartUpdater(source, () =>
+            {
+                if (Mathf.Abs(canvasGroup.alpha - endValue) > 0.01f)
+                {
+                    if(canvasGroup.alpha < endValue)
+                        canvasGroup.alpha += Time.deltaTime * speed;
+                    if (canvasGroup.alpha > endValue)
+                        canvasGroup.alpha -= Time.deltaTime * speed;
+                    return true;
+                }
+                return false;
+            });
+        }
+        
+        //----------------------------//
         /// <summary>
         /// reduce alpha to 0 over Time.deltaTime
         /// </summary>
@@ -487,7 +510,7 @@ namespace NOOD
             GameObject fadeOutObj = new GameObject("FadeOutObj");
             CoroutineScript coroutineScript = fadeOutObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartDelayLoop(() =>
+            coroutineScript.StartCoroutineLoop(() =>
             {
                 Color color = image.color;
                 color.a -= Time.deltaTime;
@@ -531,7 +554,7 @@ namespace NOOD
             image.gameObject.SetActive(true);
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartDelayLoop(() =>
+            coroutineScript.StartCoroutineLoop(() =>
             {
                 Color color = image.color;
                 color.a += Time.deltaTime;
@@ -572,7 +595,7 @@ namespace NOOD
             GameObject fadeOutObj = new GameObject("FadeOutObj");
             CoroutineScript coroutineScript = fadeOutObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartDelayLoop(() =>
+            coroutineScript.StartCoroutineLoop(() =>
             {
                 Color color = textMeshProUGUI.color;
                 color.a -= Time.deltaTime;
@@ -615,7 +638,7 @@ namespace NOOD
             GameObject fadeInObj = new GameObject("FadeInObj");
             CoroutineScript coroutineScript = fadeInObj.AddComponent<CoroutineScript>();
 
-            coroutineScript.StartDelayLoop(() =>
+            coroutineScript.StartCoroutineLoop(() =>
             {
                 Color color = textMeshProUGUI.color;
                 color.a += Time.deltaTime;
@@ -673,7 +696,7 @@ namespace NOOD
         public static void StartNewCoroutineLoop(Action action, string functionName, float pausePerLoop, int loopTime)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
-            coroutineScript.StartDelayLoop(() =>
+            coroutineScript.StartCoroutineLoop(() =>
             {
                 action?.Invoke();
                 return false;
@@ -686,7 +709,7 @@ namespace NOOD
         public static void StartNewCoroutineLoop(Func<bool> func, string functionName)
         {
             CoroutineScript coroutineScript = CreateNewCoroutineObj();
-            coroutineScript.StartDelayLoop(func, functionName, Time.deltaTime, -1);
+            coroutineScript.StartCoroutineLoop(func, functionName, Time.deltaTime, -1);
         }
         public static void StopCoroutineLoop(string functionName)
         {
@@ -741,13 +764,13 @@ namespace NOOD
         {
             UpdateObject.Create(target, () => {action?.Invoke(); return false;}, functionName, stopAllWithTheSameName);
         }
-        public static void StartUpdater(object target, Func<bool> func)
+        public static UpdateObject StartUpdater(object target, Func<bool> func)
         {
-            UpdateObject.Create(target, func, "", false);
+            return UpdateObject.Create(target, func, "", false);
         }
-        public static void StartUpdater(object target, Func<bool> func, string functionName)
+        public static UpdateObject StartUpdater(object target, Func<bool> func, string functionName)
         {
-            UpdateObject.Create(target, func, functionName, false);
+            return UpdateObject.Create(target, func, functionName, false);
         }
         public static void StartUpdater(object target, Func<bool> func, string functionName, bool stopAllWithTheSameName)
         {

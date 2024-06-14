@@ -18,17 +18,16 @@ namespace NOOD.Sound
     #if UNITY_EDITOR
         public void GenerateSoundEnum()
         {
-            string folderPath = Application.dataPath + "/_Scripts/Noody/Extension/";
-            EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList());
-            EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList());
+            // string folderPath = Application.dataPath + "/_Scripts/Noody/Extension/";
+            // EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList());
+            // EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList());
             GenerateSoundEnumNood();
             AssetDatabase.Refresh();
         }
         private void GenerateSoundEnumNood()
         {
-            string rootPath = RootPathExtension<SoundManager>.RootPath;
-            Debug.Log(rootPath);
-            string folderPath = rootPath.Replace("CustomEditor/SoundManagerEditor.cs", "Extension/");
+            string folderPath = RootPathExtension<SoundEnum>.FolderPath(".cs");
+            Debug.Log(folderPath);
             EnumCreator.WriteToEnum<SoundEnum>(folderPath, "SoundEnum", soundDic.Dictionary.Keys.ToList(), "NOOD.Sound");
             EnumCreator.WriteToEnum<MusicEnum>(folderPath, "MusicEnum", musicDic.Dictionary.Keys.ToList(), "NOOD.Sound");
         }

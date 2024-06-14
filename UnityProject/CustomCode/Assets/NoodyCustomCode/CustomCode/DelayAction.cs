@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Linq;
-using Cysharp.Threading.Tasks;
-using System.Threading;
 
 namespace NOOD
 {
@@ -16,8 +14,6 @@ namespace NOOD
         [SerializeField] private float delaySecond;
         [SerializeField] private Action delayAction;
         [SerializeField] private string functionName;
-        public bool isStop;
-        private CancellationTokenSource _cancellationTokenSource;
 
         #region Static
         public static DelayAction Create()
@@ -33,7 +29,6 @@ namespace NOOD
             _delayActions.Add(delayAction);
             DontDestroyOnLoad(delayObject);
 
-            delayAction.isStop = false;
             return delayAction;
         }
         public static void StopDelayFunction(string functionName)
@@ -46,28 +41,14 @@ namespace NOOD
             }
         }
         #endregion
-        private async void DelayFunction()
-        {
-            try
-            {
-                await UniTask.Delay((int)(delaySecond * 1000f), cancellationToken: _cancellationTokenSource.Token);
-                if (isStop) 
-                {
-                    Destroy(this.gameObject);
-                    return;
-                }
-                delayAction?.Invoke();
-                OnComplete?.Invoke();
-                _delayActions.Remove(this);
-                Destroy(this.gameObject);
-            }
-            catch(OperationCanceledException)
-            {
-                Debug.Log($"Cancel {functionName} successfully");
-                Destroy(this.gameObject);
-                return;
-            }
 
+        private IEnumerator Co_Function()
+        {
+            yield return new WaitForSeconds(delaySecond);
+            delayAction?.Invoke();
+            OnComplete?.Invoke();
+            _delayActions.Remove(this);
+            Destroy(this.gameObject);
         }
 
         public void StartDelayFunction(Action action, string functionName, float second)
@@ -75,15 +56,12 @@ namespace NOOD
             this.delayAction = action;
             this.delaySecond = second;
             this.functionName = functionName;
-            _cancellationTokenSource = new CancellationTokenSource(); 
-            DelayFunction();
+            StartCoroutine(Co_Function());
         }
         private void StopDelayFunction()
         {
-            Debug.Log("Stop");
-            isStop = true;
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource.Dispose();
+            this.StopCoroutine(this.Co_Function());
+            Destroy(this.gameObject, 0.2f);
         }
     }
 }
