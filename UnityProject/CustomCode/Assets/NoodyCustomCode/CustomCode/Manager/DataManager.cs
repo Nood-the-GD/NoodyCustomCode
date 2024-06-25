@@ -65,7 +65,7 @@ namespace NOOD.Data
         /// <returns></returns>
         public static T LoadDataFromDefaultFolder(string fileName)
         {
-            if (FileExtension.IsExitFileInDefaultFolder(fileName))
+            if (FileExtension.IsExitFileInDatasFolder(fileName))
             {
                 string jsonStr = Resources.Load<TextAsset>(Path.Combine("Datas", fileName)).text;
                 return JsonConvert.DeserializeObject<T>(jsonStr);
