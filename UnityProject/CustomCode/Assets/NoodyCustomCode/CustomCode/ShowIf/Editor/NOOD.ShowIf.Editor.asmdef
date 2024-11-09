@@ -1,10 +1,7 @@
 {
-    "name": "NOOD",
-    "rootNamespace": "NOOD",
+    "name": "NOOD.ShowIf.Editor",
+    "rootNamespace": "",
     "references": [
-        "GUID:2bafac87e7f4b9b418d9448d219b01ab",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:f592ff74c456846509b4a6f6a27f5234",
         "GUID:e59956de69ea249f2a52f0e59116586a"
     ],
     "includePlatforms": [],
